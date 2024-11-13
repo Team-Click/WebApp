@@ -1,5 +1,5 @@
 # WebApp
-/WebApp
+/WebApp   
 ├── /src                           # 소스 코드 폴더   
 │   ├── /components                # 재사용 가능한 컴포넌트들   
 │   ├── /screens                   # 화면 컴포넌트   
