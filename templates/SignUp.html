@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>회원가입 페이지</title>
+  <link rel="stylesheet" href="../static/csss/SignUp.css">
+</head>
+<body>
+  <div class="signup-container">
+    <h1>회원가입</h1>
+    <form id="signUpForm">
+      <label for="studentId">학번</label>
+      <input type="text" id="studentId" name="studentId" required>
+
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" required>
+
+      <label for="password">비밀번호</label>
+      <input type="password" id="password" name="password" required>
+
+      <button type="submit">회원가입</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <!-- JavaScript 코드 포함 -->
+  <script>
+    // 폼 제출 이벤트 리스너 추가
+    document.getElementById('signUpForm').addEventListener('submit', async function(event) {
+      // 기본 폼 제출 동작 막기
+      event.preventDefault();
+
+      // 입력값 가져오기
+      const studentId = document.getElementById('studentId').value.trim();
+      const name = document.getElementById('name').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      // 학번 검증 (8자리 숫자인지 확인)
+      const studentIdPattern = /^\d{8}$/;
+      if (!studentIdPattern.test(studentId)) {
+        alert("학번은 8자리 숫자여야 합니다.");
+        return; // 검증 실패 시 함수 종료
+      }
+
+      // 이름 검증 (한글 또는 영어로만 구성되었는지 확인)
+      const namePattern = /^[가-힣a-zA-Z]+$/;
+      if (!namePattern.test(name)) {
+        alert("이름은 한글 또는 영어로만 입력해 주세요.");
+        return; // 검증 실패 시 함수 종료
+      }
+
+      // 비밀번호 검증 (8자 이상, 영문과 숫자 포함 확인)
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+      if (!passwordPattern.test(password)) {
+        alert("비밀번호는 영문과 숫자를 포함한 8자 이상이어야 합니다.");
+        return; // 검증 실패 시 함수 종료
+      }
+
+      // 서버에 회원가입 데이터 전송
+      try {
+        // 서버에 POST 요청 보내기
+        const response = await fetch('/api/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json' // JSON 형식으로 데이터 전송
+          },
+          body: JSON.stringify({ studentId, name, password }) // JSON 형태로 데이터 보내기
+        });
+
+        // 서버 응답 JSON 형태로 파싱
+        const result = await response.json();
+
+        // 회원가입 성공 시 알림 표시 후 로그인 페이지로 이동
+        if (result.success) {
+          alert("회원가입이 성공적으로 완료되었습니다.");
+          window.location.href = "/login"; // 로그인 페이지로 리디렉션
+        } else {
+          // 회원가입 실패 시 에러 메시지 표시
+          alert("회원가입에 실패했습니다. 다시 시도해 주세요.");
+        }
+      } catch (error) {
+        // 서버 요청 중 오류 발생 시
+        console.error("서버 요청 중 오류가 발생했습니다.", error);
+        alert("서버 오류가 발생했습니다. 나중에 다시 시도해 주세요.");
+      }
+    });
+  </script>
+</body>
+</html>

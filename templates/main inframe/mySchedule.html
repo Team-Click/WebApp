@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>내 시간표</title>
+  <link rel="stylesheet" href="../../static/csss/mySchedule.css" type="text/css">
+</head>
+<body>
+  <div class="mySchedule-buttons">
+    <button onclick="openUploadWindow()">시간표 등록/변경</button>
+    <button onclick="openchangeWindow()">시간표 수정</button>
+  </div>
+
+  <div class="content">
+    <h1>내 시간표</h1>
+  </div>
+  <hr style="width: 50%; margin-top: 0;">
+  <div id="schedule-container"></div>
+  
+  <script src="../../static/tools.js"></script>
+  <script>
+    // 내 시간표 기능 구현
+    async function loadMySchedule() {
+      try {
+        const response = await fetch("../../tests/이헌성.json");
+        if (!response.ok) throw new Error("Network response was not ok");
+        const myScheduleData = await response.json();
+        const scheduleRenderer = new ScheduleRenderer("schedule-container");
+        scheduleRenderer.showSchedule(myScheduleData);
+      } catch (error) {
+        console.error("Failed to load my schedule:", error);
+      }
+    }
+
+    // 페이지 로드 시 내 시간표 불러오기
+    document.addEventListener("DOMContentLoaded", () => {
+      loadMySchedule();
+    });
+
+    // 시간표 등록/변경 및 수정 관련 함수
+    function openUploadWindow() {
+      window.open("UploadForm/imageUpload.html", "이미지 등록", "width=500,height=300");
+    }
+
+    function openchangeWindow() {
+      window.open("UploadForm/changetable.html", "시간표 수정", "width=600,height=800");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!--사이드바-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>side</title>
+  <link rel="stylesheet" href="../../static/csss/sideBar.css" type="text/css" >
+</head>
+<body>
+  <div id="side_info">
+    <h3 style="padding: 0; margin-bottom: 0;">계정 정보</h3>
+    <hr width="60%">
+    <p id="name">이름: 홍길동</p>
+    <p id="studentNumber">학번: 20000000</p>
+  </div>
+
+  <div id="sidebar">
+    <button class="sidebar-button" onclick="loadPage('main inframe/mySchedule.html')">내 시간표</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/friends.html')">친구 시간표</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/collab.html')">시간표 협업 기능</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/classroom.html')">강의실 시간표</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/application.html')">수강 신청용</button>
+
+    <button class="home-button" onclick="goHome()">
+      <img src="../../asset/image/home-icon.png" alt="home-icon" class="icon">
+    </button>
+    
+  </div>
+
+
+  <script>
+    function loadPage(page) {
+      // 부모 페이지의 contentFrame src 속성을 변경하여 페이지 로드
+      window.parent.document.getElementById("contentFrame").src = page;
+    }
+
+    function goHome() {
+      // index.html로 이동
+      window.parent.location.href = "../index.html";
+    }
+  </script>
+</body>
+</html>

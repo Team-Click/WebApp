@@ -1,0 +1,97 @@
+/*세종 레드: #b93234    rgb(255, 255, 233);*/
+
+* {background-color: white;}
+
+@font-face {
+  font-family: 'SMUSnowflake-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SMUSnowflake-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/*메인페이지들*/
+html, body { 
+  margin: 0; 
+  padding: 0; 
+  height: 100%; 
+  background-color: #b93234;
+  overflow: hidden;
+}
+
+iframe {
+  width: 15%;
+  height: 100%;
+  background-color: #b93234;
+}
+
+#side_info {
+  width: 90%;
+  margin: 30px auto;
+  margin-bottom: 0;
+  padding: 10px 0;
+  text-align: center;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  border-radius: 10px;
+}
+
+p {
+  font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+}
+
+
+  /* 사이드바 스타일 */
+#sidebar {
+  background-color: #b93234; /* 배경색 설정 */
+  padding: 20px;
+  height: 100%;
+}
+
+/* 사이드바 버튼 스타일 */
+.sidebar-button {
+  display: block;
+  width: 100%;
+  height: 50px;
+  padding: 10px;
+  margin: 50px 0px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  font-size: 18px;
+  color: white;
+  background-color: transparent;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+.sidebar-button:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* 호버 효과 */
+}
+
+
+/*홈 버튼*/
+.home-button {
+  background-color: white; /* 배경색 흰색 */
+  border: none;
+  padding: 10px;
+  border-radius: 50%; /* 둥근 모양 */
+  cursor: pointer;
+  position: absolute;
+  margin: 15px;
+  bottom: 10px;
+  left: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 약간의 그림자 효과 */
+}
+
+.home-button .icon {
+  width: 24px; /* 아이콘 크기 */
+  height: 22px;
+  object-fit: cover;
+}

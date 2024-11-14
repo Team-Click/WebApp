@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시간표 수정</title>
+  <link rel="stylesheet" href="../../../static/csss/changetable.css" type="text/css">
+</head>
+<body>
+  <h2>시간표 수정</h2>
+  <div id="app">
+    <!-- 학생 정보와 수업 목록 출력 -->
+    
+    <div class="card">
+      <h2>학생 정보</h2>
+      <p>이름: <span id="studentName"></span></p>
+      <p>학번: <span id="studentNumber"></span></p>
+    </div>
+
+    <div class="card">
+      <h2>수업 목록</h2>
+      <div id="scheduleList"></div>
+    </div>
+    
+    <!-- 새 수업 추가 폼 -->
+    <div class="card">
+      <h2>새 수업 추가</h2>
+      <input type="text" id="newClassName" placeholder="과목명">
+      <div id="newClassDays" class="day-buttons"></div>
+      <input type="time" id="newStartTime" step="1800">
+      <input type="time" id="newEndTime" step="1800">
+      <input type="text" id="newLocation" placeholder="위치">
+      <button onclick="scheduleManager.addClass()">추가</button>
+    </div>
+    <button id="saveScheduleButton">시간표 수정완료</button>
+  </div>
+
+  <script>
+    // 요일 정의
+    const daysOfWeek = ['월', '화', '수', '목', '금'];
+
+    class ScheduleManager {
+      constructor() {
+        this.data = {};
+        this.loadData();
+      }
+
+      // JSON 데이터 불러오기
+      async loadData() {
+        try {
+          const response = await fetch('../../../tests/이헌성.json');
+          this.data = await response.json();
+          this.displayStudentInfo();
+          this.displaySchedule();
+          this.renderDayButtons();
+        } catch (error) {
+          console.error("데이터를 불러오는 중 오류 발생:", error);
+        }
+      }
+
+      // 학생 정보 표시
+      displayStudentInfo() {
+        document.getElementById('studentName').textContent = this.data.info.name;
+        document.getElementById('studentNumber').textContent = this.data.info.number;
+      }
+
+      // 수업 목록 표시
+      displaySchedule() {
+        const scheduleList = document.getElementById('scheduleList');
+        scheduleList.innerHTML = '';
+
+        this.data.schedule.forEach((classInfo, index) => {
+          const classDiv = document.createElement('div');
+          classDiv.classList.add('class-item');
+          classDiv.innerHTML = `
+            <p><strong>과목명:</strong> ${classInfo.class_name}</p>
+            <p><strong>요일:</strong> ${classInfo.class_days.map(day => daysOfWeek[day - 1]).join(', ')}</p>
+            <p><strong>시간:</strong> ${classInfo.start_time} - ${classInfo.end_time}</p>
+            <p><strong>위치:</strong> ${classInfo.location}</p>
+            <button onclick="scheduleManager.deleteClass(${index})">삭제</button>
+          `;
+          scheduleList.appendChild(classDiv);
+        });
+      }
+
+      // 새로운 수업 추가
+      addClass() {
+        const className = document.getElementById('newClassName').value;
+        const startTime = document.getElementById('newStartTime').value;
+        const endTime = document.getElementById('newEndTime').value;
+        const location = document.getElementById('newLocation').value;
+        const classDays = [...document.querySelectorAll('.day-button.selected')].map(button => parseInt(button.dataset.day));
+
+        if (className && startTime && endTime && location) {
+          this.data.schedule.push({
+            class_name: className,
+            class_days: classDays,
+            start_time: startTime,
+            end_time: endTime,
+            location: location
+          });
+          this.displaySchedule();
+        }
+      }
+
+      // 수업 삭제
+      deleteClass(index) {
+        this.data.schedule.splice(index, 1);
+        this.displaySchedule();
+      }
+
+      // 요일 버튼 렌더링
+      renderDayButtons() {
+        const daysDiv = document.getElementById('newClassDays');
+        daysDiv.innerHTML = '';
+        daysOfWeek.forEach((day, index) => {
+          const button = document.createElement('button');
+          button.classList.add('day-button');
+          button.dataset.day = index + 1;
+          button.textContent = day;
+          button.onclick = () => button.classList.toggle('selected');
+          daysDiv.appendChild(button);
+        });
+      }
+
+      // 시간표 저장
+      async saveSchedule() {
+        try {
+          const response = await fetch('changetable.json', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(this.data),
+          });
+
+          if (response.ok) {
+            console.log("시간표가 성공적으로 저장되었습니다.");
+          } else {
+            console.error("시간표 저장 중 오류 발생:", response.statusText);
+          }
+        } catch (error) {
+          console.error("시간표 저장 중 오류 발생:", error);
+        }
+      }
+    }
+
+    // ScheduleManager 클래스 인스턴스 생성
+    const scheduleManager = new ScheduleManager();
+
+    // HTML 버튼에 클래스 메서드 연결
+    document.getElementById('saveScheduleButton').addEventListener('click', () => scheduleManager.saveSchedule());
+  </script>
+</body>
+</html>

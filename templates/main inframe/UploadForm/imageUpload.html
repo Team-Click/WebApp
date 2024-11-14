@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>이미지 등록</title>
+  <link rel="stylesheet" href="../../../static/csss/imageUpload.css" type="text/css">
+</head>
+<body>
+  <h2>이미지 등록</h2>
+  <form id="imageUploadForm" enctype="multipart/form-data">
+    <label for="imageInput">이미지 선택:</label>
+    <input type="file" id="imageInput" accept="image/*"><br><br>
+    <button type="button" onclick="submitImage()">이미지 업로드</button>
+  </form>
+
+  <script>
+    function submitImage() {
+      const fileInput = document.getElementById("imageInput");
+      if (fileInput.files.length === 0) {
+        alert("이미지를 선택해 주세요.");
+      } else {
+        alert("이미지가 업로드 되었습니다."); // 업로드 처리는 추가 서버 설정 필요
+        fileInput.value = ""; // 선택 초기화
+        window.close(); // 이미지 업로드 후 창 닫기
+      }
+    }
+  </script>
+</body>
+</html>

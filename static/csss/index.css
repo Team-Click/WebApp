@@ -1,0 +1,59 @@
+/*세종 레드: #b93234    rgb(255, 255, 233);*/
+
+* {background-color: white;}
+
+@font-face {
+  font-family: 'SMUSnowflake-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+
+
+#projectName {
+  font-size: 60px;
+  color: #b93234;
+  font-family: 'SMUSnowflake-Bold';
+  margin-top: 120px;
+  text-align: center;
+}
+
+/*
+오른쪽 정렬
+#buttons {  
+  position: fixed;
+  right: 300px;
+  bottom: 200px;
+
+  width: 20%;
+  height: 200px;
+}
+*/
+
+#buttons {  
+  display: grid; 
+  place-items: center; 
+  margin-top: 70px;
+}
+
+.start {
+  font-family: 'SMUSnowflake-Bold', Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: 300;
+
+  width: 250px;
+  height: 45px;
+  border-radius: 10px;
+  border: 2px solid #b93234;
+  background-color: transparent;
+  margin: 10px;
+  transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+/* 마우스 호버 효과 */
+.start:hover {
+  background-color: #b93234; /* 배경색을 변경 */
+  color: white; /* 텍스트 색상을 흰색으로 변경 */
+  cursor: pointer; /* 마우스 포인터를 손가락 모양으로 변경 */
+}

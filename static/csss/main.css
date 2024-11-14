@@ -1,0 +1,53 @@
+@font-face {
+  font-family: 'SMUSnowflake-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SMUSnowflake-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: white;
+}
+
+.container {
+  display: flex;
+  height: 100%;
+}
+
+
+iframe {
+  width: 85%;
+  height: 100%;
+  background-color: white;
+}
+
+#side {
+  width: 15%;
+  height: 100%;
+  background-color: #b93234;
+}
+
+
+.content {
+  display: flex;
+  justify-content: center; /* 가로 중앙 정렬 */
+  align-items: flex-start; /* 세로 상단 정렬 */
+  width: 85%; /* 사이드바를 제외한 나머지 공간 */
+  padding-top: 20px; /* 위쪽 여백 */
+}
+
+h1 {
+  margin-top: 50px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  font-size: 40px;
+}

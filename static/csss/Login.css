@@ -1,0 +1,74 @@
+@font-face {
+  font-family: 'SMUSnowflake-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SMUSnowflake-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.login-container {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+h1 {
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  color: #b93234;
+}
+
+label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+}
+
+input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  width: 100%;
+  padding: 0.7rem;
+  background-color: #b93234;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+button:hover {
+  background-color: #a12b2d;
+}
+
+#message {
+  color: #b93234;
+  font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+  margin-top: 1rem;
+}

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>친구 시간표</title>
+  <link rel="stylesheet" href="../../static/csss/friends.css">
+</head>
+<body>
+  <div class="friend-controls">
+    <button onclick="showModal('addFriendModal')">친구 추가</button>
+    <button onclick="showModal('removeFriendModal')">친구 삭제</button>
+  </div>
+
+  <div class="content">
+    <h1>친구 시간표</h1>
+    <hr style="width: 50%; margin-top: 0;">
+    
+    <div id="friend-list">
+      <h2>친구 목록</h2>
+      <div class="friend-buttons">
+        <button onclick="showFriendSchedule('이헌성')">이헌성</button>
+        <button onclick="showFriendSchedule('김태경')">김태경</button>
+        <button onclick="showFriendSchedule('권효정')">권효정</button>
+        <button onclick="showFriendSchedule('김하연')">김하연</button>
+      </div>
+    </div>
+    
+    <div id="schedule-container"></div>
+  </div>
+
+  <!-- 친구 추가 모달 -->
+  <div id="addFriendModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
+      <h2>친구 추가</h2>
+      <label for="studentId">학번</label>
+      <input type="text" id="studentId">
+      <label for="name">이름</label>
+      <input type="text" id="name">
+      <button onclick="followUser()">팔로우</button>
+    </div>
+  </div>
+
+  <!-- 친구 삭제 모달 -->
+  <div id="removeFriendModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal('removeFriendModal')">&times;</span>
+      <h2>친구 삭제</h2>
+      <ul id="remove-friends-list">
+        <li>이헌성 <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
+        <li>김태경 <button onclick="unfollowUser('김태경')">언팔로우</button></li>
+        <li>권효정 <button onclick="unfollowUser('권효정')">언팔로우</button></li>
+        <li>김하연 <button onclick="unfollowUser('김하연')">언팔로우</button></li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="../../static/tools.js"></script>
+  <script>
+    // 친구 시간표 기능 구현
+    async function loadSchedules() {
+      try {
+        const response = await fetch("../../tests/friends.json");
+        if (!response.ok) throw new Error("Network response was not ok");
+        return await response.json();
+      } catch (error) {
+        console.error("Failed to load schedules:", error);
+        return [];
+      }
+    }
+
+    async function showFriendSchedule(friendName) {
+      const schedules = await loadSchedules();
+      const friendSchedule = schedules.find((schedule) => schedule.info.name === friendName);
+      if (friendSchedule) {
+        const scheduleRenderer = new ScheduleRenderer("schedule-container");
+        scheduleRenderer.showSchedule(friendSchedule);
+      } else {
+        console.error("Schedule not found for:", friendName);
+      }
+    }
+
+    // 모달 열기 및 닫기 함수
+    function showModal(modalId) {
+      document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+
+    // 모달 열기 및 닫기 함수 예시 (추가/삭제용)
+    function showAddFriendModal() {
+      document.getElementById("addFriendModal").style.display = "block";
+    }
+
+    function showRemoveFriendModal() {
+      document.getElementById("removeFriendModal").style.display = "block";
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = "none";
+    }
+  </script>
+</body>
+</html>

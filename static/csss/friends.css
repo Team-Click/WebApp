@@ -1,0 +1,114 @@
+@font-face {
+  font-family: 'SMUSnowflake-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SMUSnowflake-Regular';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+}
+
+.friend-controls {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.friend-controls button {
+  padding: 10px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  color: white;
+  background-color: #b93234;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+h1, h2 {
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  color: #b93234;
+}
+
+#friend-list {
+  margin-left: 50px; /* 왼쪽 여백 추가 */
+}
+
+.friend-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.friend-buttons button {
+  width: 150px;
+  padding: 10px;
+  font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.friend-buttons button:hover {
+  background-color: #e0e0e0;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.modal-content {
+  text-align: center;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+
+.schedule-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.schedule-table th,
+.schedule-table td {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 5px;
+  height: 30px;
+  font-size: 12px;
+  word-wrap: break-word; /* 긴 텍스트도 줄바꿈 처리 */
+}
+
+.schedule-table th {
+  background-color: #f4f4f4;
+}
+
+.schedule-table .class-cell {
+  background-color: #e0e0e0;
+  font-weight: bold;
+}

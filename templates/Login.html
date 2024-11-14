@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>로그인 페이지</title>
+  <link rel="stylesheet" href="../static/csss/Login.css">
+</head>
+<body>
+  <div class="login-container">
+    <h1>로그인</h1>
+    <form id="loginForm">
+      <label for="studentId">학번</label>
+      <input type="text" id="studentId" name="studentId" required>
+      
+      <label for="name">이름</label>
+      <input type="text" id="name" name="name" required>
+      
+      <button type="submit">로그인</button>
+    </form>
+    <p id="message"></p>
+  </div>
+
+  <script>
+    class Login {
+      constructor() {
+        this.form = document.getElementById("loginForm");
+        this.studentIdInput = document.getElementById("studentId");
+        this.nameInput = document.getElementById("name");
+        this.message = document.getElementById("message");
+
+        this.addEventListeners();
+      }
+
+      addEventListeners() {
+        this.form.addEventListener("submit", (event) => this.handleSubmit(event));
+      }
+
+      handleSubmit(event) {
+        event.preventDefault();
+
+        const studentId = this.studentIdInput.value;
+        const name = this.nameInput.value;
+
+        if (this.validateLogin(studentId, name)) {
+          alert("로그인 성공!");
+          window.location.href = "main.html";
+        } else {
+          this.message.textContent = "학번 또는 이름이 올바르지 않습니다.";
+        }
+      }
+
+      validateLogin(studentId, name) {
+        return studentId === "23011927" && name === "김태경";
+      }
+    }
+
+    window.addEventListener("DOMContentLoaded", () => new Login());
+  </script>
+</body>
+</html>

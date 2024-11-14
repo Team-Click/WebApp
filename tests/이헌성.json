@@ -1,0 +1,57 @@
+{
+    "info": {
+      "name": "이헌성",
+      "number": "21011898"
+    },
+    "schedule": [
+      {
+        "class_name": "신시",
+        "class_days": [1, 3],
+        "start_time": "10:30",
+        "end_time": "12:00",
+        "location": "센B204"
+      },
+      {
+        "class_name": "창기정",
+        "class_days": [3],
+        "start_time": "13:30",
+        "end_time": "15:00",
+        "location": "동천관418"
+      },
+      {
+        "class_name": "erp",
+        "class_days": [4],
+        "start_time": "13:30",
+        "end_time": "15:00",
+        "location": "동천관418"
+      },
+      {
+        "class_name": "확통",
+        "class_days": [1, 3],
+        "start_time": "16:30",
+        "end_time": "18:00",
+        "location": "동천관418"
+      },
+      {
+        "class_name": "알고리즘",
+        "class_days": [5],
+        "start_time": "13:00",
+        "end_time": "15:00",
+        "location": "동천관418"
+      },
+      {
+        "class_name": "동시모",
+        "class_days": [2, 4],
+        "start_time": "16:30",
+        "end_time": "18:00",
+        "location": "동천관418"
+      },
+      {
+        "class_name": "ml",
+        "class_days": [2],
+        "start_time": "19:00",
+        "end_time": "21:00",
+        "location": "동천관418"
+      }
+    ]
+  }
