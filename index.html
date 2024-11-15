@@ -6,7 +6,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>click</title>
 
-  <link rel="stylesheet" href="static/csss/index.css" type="text/css">
+  <!-- integrated.css 링크 추가 -->
+  <link rel="stylesheet" href="/static/csss/integrated.css">
+
+  <!-- index.css 내용을 스타일 태그로 삽입 -->
+  <style>
+    * { background-color: white; }
+
+    @font-face {
+      font-family: 'SMUSnowflake-Bold';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    #projectName {
+      font-size: 60px;
+      color: #b93234;
+      font-family: 'SMUSnowflake-Bold';
+      margin-top: 120px;
+      text-align: center;
+    }
+
+    #buttons {  
+      display: grid; 
+      place-items: center; 
+      margin-top: 70px;
+    }
+
+    .start {
+      font-family: 'SMUSnowflake-Bold', Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      width: 250px;
+      height: 45px;
+      border-radius: 10px;
+      border: 2px solid #b93234;
+      background-color: transparent;
+      margin: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .start:hover {
+      background-color: #b93234;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
   <h1 id="projectName">프로젝트 제목(미정)</h1>
@@ -16,11 +62,16 @@
 
   <div id="buttons">
     <a href="templates/Login.html">
-    <button type="button" name="logIn" class="start">로그인</button></a> <br>
+      <button type="button" name="logIn" class="start">로그인</button>
+    </a>
+    <br>
     <a href="templates/SignUp.html">
-    <button type="button" name="signUp" class="start">회원 가입</button></a> <br>
+      <button type="button" name="signUp" class="start">회원 가입</button>
+    </a>
+    <br>
     <a href="templates/main.html">
-    <button type="button" name="No_lonIn_start" class="start">로그인 없이 시작하기</button></a>
+      <button type="button" name="No_lonIn_start" class="start">로그인 없이 시작하기</button>
+    </a>
   </div>
 
   <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>

@@ -1,15 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Click</title>
-  <link rel="stylesheet" href="../static/csss/main.css" type="text/css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click</title>
+    <link rel="stylesheet" href="/static/csss/integrated.css">
+    
+    <style>
+        /* main.css 내용 */
+        @font-face {
+            font-family: 'SMUSnowflake-Bold';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'SMUSnowflake-Regular';
+            src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: white;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        iframe {
+            width: 85%;
+            height: 100%;
+            background-color: white;
+        }
+
+        #side {
+            width: 15%;
+            height: 100%;
+            background-color: #b93234;
+        }
+
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            width: 85%;
+            padding-top: 20px;
+        }
+
+        h1 {
+            margin-top: 50px;
+            font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+            font-size: 40px;
+        }
+    </style>
+
 </head>
 <body>
-  <div class="container">
-    <iframe src="main inframe/sideBar.html" id="side" frameborder="0"></iframe>
-    <iframe src="main inframe/mySchedule.html" id="contentFrame" frameborder="0"></iframe>
-  </div>
+    <div class="container">
+        <iframe src="main inframe/sideBar.html" id="side" frameborder="0"></iframe>
+        <iframe src="main inframe/mySchedule.html" id="contentFrame" frameborder="0"></iframe>
+    </div>
 </body>
 </html>

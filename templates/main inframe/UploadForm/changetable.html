@@ -4,12 +4,103 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>시간표 수정</title>
-  <link rel="stylesheet" href="../../../static/csss/changetable.css" type="text/css">
+  <link rel="stylesheet" href="../../../static/csss/integrated.css">
+  <style>
+    @font-face {
+      font-family: 'SMUSnowflake-Bold';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'SMUSnowflake-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 500px;
+    }
+
+    h2 {
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: #b93234;
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      background-color: #b93234;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+    }
+
+    button:hover {
+      background-color: #a12b2d;
+    }
+
+    .card {
+      display: block;
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .day-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+
+    .day-button {
+      padding: 5px 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .day-button.selected {
+      background-color: #b93234;
+      color: white;
+    }
+
+    .class-item {
+      margin-bottom: 15px;
+      padding: 10px;
+      background-color: #e9ecef;
+      border-radius: 5px;
+    }
+
+  </style>
 </head>
 <body>
   <h2>시간표 수정</h2>
   <div id="app">
-    <!-- 학생 정보와 수업 목록 출력 -->
     
     <div class="card">
       <h2>학생 정보</h2>
@@ -22,7 +113,6 @@
       <div id="scheduleList"></div>
     </div>
     
-    <!-- 새 수업 추가 폼 -->
     <div class="card">
       <h2>새 수업 추가</h2>
       <input type="text" id="newClassName" placeholder="과목명">
@@ -36,7 +126,6 @@
   </div>
 
   <script>
-    // 요일 정의
     const daysOfWeek = ['월', '화', '수', '목', '금'];
 
     class ScheduleManager {
@@ -45,7 +134,6 @@
         this.loadData();
       }
 
-      // JSON 데이터 불러오기
       async loadData() {
         try {
           const response = await fetch('../../../tests/이헌성.json');
@@ -58,13 +146,11 @@
         }
       }
 
-      // 학생 정보 표시
       displayStudentInfo() {
         document.getElementById('studentName').textContent = this.data.info.name;
         document.getElementById('studentNumber').textContent = this.data.info.number;
       }
 
-      // 수업 목록 표시
       displaySchedule() {
         const scheduleList = document.getElementById('scheduleList');
         scheduleList.innerHTML = '';
@@ -83,7 +169,6 @@
         });
       }
 
-      // 새로운 수업 추가
       addClass() {
         const className = document.getElementById('newClassName').value;
         const startTime = document.getElementById('newStartTime').value;
@@ -103,13 +188,11 @@
         }
       }
 
-      // 수업 삭제
       deleteClass(index) {
         this.data.schedule.splice(index, 1);
         this.displaySchedule();
       }
 
-      // 요일 버튼 렌더링
       renderDayButtons() {
         const daysDiv = document.getElementById('newClassDays');
         daysDiv.innerHTML = '';
@@ -123,7 +206,6 @@
         });
       }
 
-      // 시간표 저장
       async saveSchedule() {
         try {
           const response = await fetch('changetable.json', {
@@ -145,10 +227,7 @@
       }
     }
 
-    // ScheduleManager 클래스 인스턴스 생성
     const scheduleManager = new ScheduleManager();
-
-    // HTML 버튼에 클래스 메서드 연결
     document.getElementById('saveScheduleButton').addEventListener('click', () => scheduleManager.saveSchedule());
   </script>
 </body>

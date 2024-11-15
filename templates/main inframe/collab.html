@@ -4,7 +4,106 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>collab</title>
-  <link rel="stylesheet" href="../../static/csss/collab.css">
+  <link rel="stylesheet" href="../../static/csss/integrated.css">
+  <style>
+    @font-face {
+      font-family: 'SMUSnowflake-Bold';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'SMUSnowflake-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    body {
+      justify-content: center;
+    }
+
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 20px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 600px;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      overflow-y: auto;
+    }
+
+    h1 {
+      margin-top: 30px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      font-size: 50px;
+    }
+
+    h2 {
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 15px;
+      background-color: #b93234;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      width: 50%;
+    }
+
+    input {
+      margin-top: 10px;
+      padding: 10px;
+    }
+
+    button:hover {
+      background-color: #a12b2d;
+    }
+
+    #schedule-table-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: center;
+    }
+
+    td.free {
+      background-color: #c3f0c8;
+    }
+
+    td.busy {
+      background-color: #f5c6cb;
+    }
+  </style>
 </head>
 <body>
   <div class="content">
@@ -28,7 +127,7 @@
         for (let file of files) {
           const fileContent = await file.text();
           const parsedData = JSON.parse(fileContent);
-          parsedData.fileName = file.name; // 파일명을 저장하여 나중에 필터링에 사용
+          parsedData.fileName = file.name;
           this.studentData.push(parsedData);
         }
       }
@@ -40,7 +139,7 @@
 
       getFreeTimeForStudent(schedule) {
         const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
-        
+
         schedule.forEach(({ class_days, start_time, end_time }) => {
           const startTime = this.parseTime(start_time);
           const endTime = this.parseTime(end_time);
@@ -116,7 +215,6 @@
 
     async function loadDataAndFindFreeTime() {
       const files = document.getElementById('json-files').files;
-      
       await scheduler.loadStudentData(files);
       scheduler.findCommonFreeTime();
     }
