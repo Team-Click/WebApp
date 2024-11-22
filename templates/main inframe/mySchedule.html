@@ -33,19 +33,41 @@
       font-size: 50px;
     }
 
-    table {
+    .schedule-table-container {
+      display: flex;
+      justify-content: center;
+      margin: 3%;
+    }
+
+    .schedule-table {
+      margin: auto;
+      width: 70%; /* 화면의 70%로 설정 */
       border-collapse: collapse;
-      width: 100%;
+      table-layout: fixed;
+      border-radius: 20px; /* 테이블 외곽 둥글게 설정 */
+      overflow: hidden; /* 둥근 모서리가 잘리도록 설정 */
     }
 
-    th, td {
-      border: 1px solid black;
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid #ddd;
       text-align: center;
-      padding: 8px;
+      padding: 5px;
+      height: 30px;
+      font-size: 13px;
+      word-wrap: break-word;
     }
 
-    td {
-      white-space: pre-line;
+    .schedule-table th {
+      background-color: #b93234;
+      color: white;
+      font-size: 15px;
+      padding: 1.0%;
+    }
+
+    .schedule-table .class-cell {
+      background-color: #ddd;
+      font-weight: bold;
     }
 
     .mySchedule-buttons {
@@ -71,55 +93,6 @@
     .mySchedule-buttons button:hover {
       background-color: #a12b2d;
     }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      background-color: white;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
-    .modal-content {
-      text-align: center;
-    }
-
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-    }
-
-    .schedule-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-    }
-
-    .schedule-table th,
-    .schedule-table td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 5px;
-      height: 30px;
-      font-size: 12px;
-      word-wrap: break-word;
-    }
-
-    .schedule-table th {
-      background-color: #f4f4f4;
-    }
-
-    .schedule-table .class-cell {
-      background-color: #e0e0e0;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
@@ -132,7 +105,9 @@
     <h1>내 시간표</h1>
   </div>
   <hr style="width: 50%; margin-top: 0;">
-  <div id="schedule-container"></div>
+  <div class="schedule-table-container">
+    <div id="schedule-container"></div>
+  </div>
 
   <script src="../../static/tools.js"></script>
   <script>
