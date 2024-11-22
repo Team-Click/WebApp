@@ -127,6 +127,37 @@
       }
     }
 
+    //loadMySchedule함수의 서버 연결 버전
+    /*
+
+        async function loadMySchedule() {
+      try {
+        // 로그인한 사용자 시간표 데이터를 백엔드에서 요청
+        const response = await fetch("/api/schedule", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`, // JWT 토큰을 헤더에 포함
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Failed to fetch schedule data");
+
+        const myScheduleData = await response.json();
+
+        // 시간표 데이터를 렌더링
+        const scheduleRenderer = new ScheduleRenderer("schedule-container");
+        scheduleRenderer.showSchedule(myScheduleData);
+      } catch (error) {
+        console.error("Failed to load my schedule:", error);
+        document.getElementById("schedule-container").innerHTML = `
+          <p>시간표를 불러오는 데 실패했습니다. 다시 시도해 주세요.</p>
+        `;
+      }
+    }
+
+    */
+
     // 페이지 로드 시 내 시간표 불러오기
     document.addEventListener("DOMContentLoaded", () => {
       loadMySchedule();
