@@ -18,37 +18,46 @@
       src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
       font-weight: 400;
       font-style: normal;
+    } 
+
+    .content {
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 20px;
     }
 
-    body {
-      font-family: 'Arial', sans-serif;
+    #title1 {
+      display: block;
+      width: 100%;
     }
 
-    .friend-controls {
-      position: absolute;
-      top: 20px;
-      right: 20px;
+    #content1 {
       display: flex;
-      gap: 10px;
+      align-items: flex-start; /* 각 요소가 위쪽에 정렬되고 고유 높이를 유지 */
+      width: 100%;
+      justify-content:space-around;
     }
 
-    .friend-controls button {
-      padding: 10px;
-      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
-      color: white;
-      background-color: #b93234;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    h1, h2 {
+    h2 {
       font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
       color: #b93234;
     }
 
+    h1 {
+      text-align: center;
+      margin-top: 30px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      font-size: 50px;  
+    }
+
     #friend-list {
-      margin-left: 50px;
+      text-align: center;
+      margin: 50px;
+      padding: 10px;
+      width: 20%;
+      border: 1px solid #ffffff;
+      box-shadow: 3px 3px 5px #ddd,
+                  0 0 5px #ddd;
     }
 
     .friend-buttons {
@@ -58,18 +67,30 @@
     }
 
     .friend-buttons button {
-      width: 150px;
+      width: 40%;
       padding: 10px;
       font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
       background-color: #f4f4f4;
       border: 1px solid #ddd;
       border-radius: 5px;
       cursor: pointer;
-      text-align: left;
+      text-align: center;
     }
 
     .friend-buttons button:hover {
       background-color: #e0e0e0;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      width: 90%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
     }
 
     .modal {
@@ -96,10 +117,23 @@
       cursor: pointer;
     }
 
+    #schedule-container {
+      width: 80%;
+    }
+
     .schedule-table {
-      width: 100%;
+      border: 1px solid #ffffff;
+      box-shadow: 3px 3px 5px #ddd,
+                  0 0 3px #ddd,
+                  0 0 3px #ddd;
+      margin: auto;
+      margin-top: 40px;
+      margin-bottom: 50px;
+      width: 90%; /* 화면의 70%로 설정 */
       border-collapse: collapse;
       table-layout: fixed;
+      border-radius: 20px; /* 테이블 외곽 둥글게 설정 */
+      overflow: hidden; /* 둥근 모서리가 잘리도록 설정 */
     }
 
     .schedule-table th,
@@ -108,18 +142,46 @@
       text-align: center;
       padding: 5px;
       height: 30px;
-      font-size: 12px;
+      font-size: 13px;
       word-wrap: break-word;
     }
 
     .schedule-table th {
-      background-color: #f4f4f4;
+      background-color: #b93234;
+      color: white;
+      font-size: 15px;
+      padding: 1.0%;
     }
 
     .schedule-table .class-cell {
-      background-color: #e0e0e0;
+      background-color: #ddd;
       font-weight: bold;
     }
+
+    .friend-controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .friend-controls button {
+      padding: 10px 15px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: white;
+      background-color: #b93234;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .friend-controls button:hover {
+      background-color: #a12b2d;
+    }
+
   </style>
 </head>
 <body>
@@ -129,20 +191,29 @@
   </div>
 
   <div class="content">
-    <h1>친구 시간표</h1>
-    <hr style="width: 50%; margin-top: 0;">
-    
-    <div id="friend-list">
-      <h2>친구 목록</h2>
-      <div class="friend-buttons">
-        <button onclick="showFriendSchedule('이헌성')">이헌성</button>
-        <button onclick="showFriendSchedule('김태경')">김태경</button>
-        <button onclick="showFriendSchedule('권효정')">권효정</button>
-        <button onclick="showFriendSchedule('김하연')">김하연</button>
-      </div>
+    <div id="title1">
+      <h1>친구 시간표</h1>
+      <hr style="width: 50%; margin-top: 0;">
     </div>
     
-    <div id="schedule-container"></div>
+    <div id="content1">
+      <div id="friend-list">
+        <h2>친구 목록</h2>
+        <!-- 검색 입력 필드 추가 -->
+        <div class="search-container">
+          <input type="text" id="friendSearch" placeholder="친구 이름 검색..." oninput="filterFriends()">
+        </div>
+
+        <div class="friend-buttons">
+          <button onclick="showFriendSchedule('이헌성')">이헌성</button>
+          <button onclick="showFriendSchedule('김태경')">김태경</button>
+          <button onclick="showFriendSchedule('권효정')">권효정</button>
+          <button onclick="showFriendSchedule('김하연')">김하연</button>
+        </div>
+      </div>
+      
+      <div id="schedule-container"></div>
+    </div>
   </div>
 
   <div id="addFriendModal" class="modal">
@@ -221,6 +292,17 @@
 
     function closeModal(modalId) {
       document.getElementById(modalId).style.display = "none";
+    }
+
+       // 친구 목록 필터링 함수
+       function filterFriends() {
+      const searchInput = document.getElementById("friendSearch").value.toLowerCase();
+      const friendButtons = document.getElementById("friendButtons").getElementsByTagName("button");
+
+      for (let button of friendButtons) {
+        const friendName = button.textContent.toLowerCase();
+        button.style.display = friendName.includes(searchInput) ? "block" : "none";
+      }
     }
   </script>
 </body>
