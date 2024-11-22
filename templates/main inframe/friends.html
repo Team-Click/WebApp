@@ -20,6 +20,10 @@
       font-style: normal;
     } 
 
+    html {
+    overflow-y: scroll; /* 세로 스크롤 바 항상 표시 */
+    }
+
     .content {
       justify-content: center;
       align-items: flex-start;
@@ -210,23 +214,25 @@
           <button onclick="showFriendSchedule('권효정')">권효정</button>
           <button onclick="showFriendSchedule('김하연')">김하연</button>
         </div>
+
+        <div id="addFriendModal" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
+            <h2>친구 추가</h2>
+            <label for="studentId">학번</label>
+            <input type="text" id="studentId">
+            <label for="name">이름</label>
+            <input type="text" id="name">
+            <button onclick="followUser()">팔로우</button>
+          </div>
+        </div>
       </div>
       
       <div id="schedule-container"></div>
     </div>
   </div>
 
-  <div id="addFriendModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
-      <h2>친구 추가</h2>
-      <label for="studentId">학번</label>
-      <input type="text" id="studentId">
-      <label for="name">이름</label>
-      <input type="text" id="name">
-      <button onclick="followUser()">팔로우</button>
-    </div>
-  </div>
+
 
   <div id="removeFriendModal" class="modal">
     <div class="modal-content">
