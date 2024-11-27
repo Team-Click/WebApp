@@ -13,13 +13,6 @@
       font-style: normal;
     }
 
-    @font-face {
-      font-family: 'SMUSnowflake-Regular';
-      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
-      font-weight: 400;
-      font-style: normal;
-    }
-
     body {
       font-family: 'Arial', sans-serif;
       background-color: #f9f9f9;
@@ -34,13 +27,78 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      max-width: 500px;
+      width: 70%;
+      max-width: 1500px;
     }
 
     h2 {
       font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
       color: #b93234;
       margin-bottom: 20px;
+    }
+
+    .card {
+      display: block;
+      background-color: #f9f9f9;
+      padding: 20px;
+      margin: 10px 0;
+      width: 100%;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .day-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 10px;
+    }
+
+    .day-button {
+      padding: 10px 20px; /* 버튼 크기 조정 */
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      background-color: #b93234; /* 기본 배경색 */
+      color: white;
+      font-size: 16px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    .day-button:hover {
+      background-color: #a12b2d; /* 호버 시 어두운 배경색 */
+    }
+
+    .day-button.selected {
+      background-color: #8f2326; /* 선택 상태 배경색 */
+    }
+
+    #selectedDays {
+      font-size: 14px;
+      color: #555;
+      margin-top: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #333;
+      font-weight: bold;
+    }
+
+    input, select {
+      width: calc(100% - 20px);
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    input:focus, select:focus {
+      border-color: #b93234;
+      outline: none;
     }
 
     button {
@@ -58,50 +116,39 @@
       background-color: #a12b2d;
     }
 
-    .card {
-      display: block;
-      background-color: #f9f9f9;
-      padding: 20px;
-      margin: 10px 0;
-      width: 100%;
-      max-width: 500px;
-      border-radius: 8px;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-      max-height: 400px;
-      overflow-y: auto;
-    }
+    /* 모바일 스타일 */
+    @media screen and (max-width: 600px) {
+      #app {
+        width: 90%; /* 화면 너비에 맞추기 */
+      }
 
-    .day-buttons {
-      display: flex;
-      justify-content: space-around;
-      margin-top: 10px;
-    }
+      h2 {
+        font-size: 20px; /* 제목 크기 조정 */
+      }
 
-    .day-button {
-      padding: 5px 10px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      cursor: pointer;
-    }
+      .card {
+        padding: 15px;
+      }
 
-    .day-button.selected {
-      background-color: #b93234;
-      color: white;
-    }
+      .day-button {
+        padding: 8px 16px; /* 버튼 크기 줄이기 */
+        font-size: 14px;
+      }
 
-    .class-item {
-      margin-bottom: 15px;
-      padding: 10px;
-      background-color: #e9ecef;
-      border-radius: 5px;
-    }
+      input, select {
+        font-size: 14px; /* 입력창 텍스트 크기 줄이기 */
+      }
 
+      button {
+        font-size: 14px; /* 버튼 텍스트 크기 줄이기 */
+        padding: 8px 16px;
+      }
+    }
   </style>
 </head>
 <body>
   <h2>시간표 수정</h2>
   <div id="app">
-    
     <div class="card">
       <h2>학생 정보</h2>
       <p>이름: <span id="studentName"></span></p>
@@ -115,14 +162,29 @@
     
     <div class="card">
       <h2>새 수업 추가</h2>
-      <input type="text" id="newClassName" placeholder="과목명">
+      <label for="newClassName">과목명</label>
+      <input type="text" id="newClassName" placeholder="과목명을 입력하세요">
+      
+      <label for="newClassDays">요일 선택</label>
       <div id="newClassDays" class="day-buttons"></div>
+      <div id="selectedDays">선택한 요일: 없음</div> <!-- 선택한 요일 표시 -->
+
+      <br>
+
+      <label for="newStartTime">시작 시간</label>
       <input type="time" id="newStartTime" step="1800">
+
+      <label for="newEndTime">종료 시간</label>
       <input type="time" id="newEndTime" step="1800">
-      <input type="text" id="newLocation" placeholder="위치">
+
+      <label for="newLocation">위치</label>
+      <input type="text" id="newLocation" placeholder="수업 위치를 입력하세요">
+
       <button onclick="scheduleManager.addClass()">추가</button>
     </div>
-    <button id="saveScheduleButton">시간표 수정완료</button>
+    <button id="saveScheduleButton" onclick="scheduleManager.saveSchedule()">시간표 수정완료</button>
+
+    <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>  
   </div>
 
   <script>
@@ -131,6 +193,7 @@
     class ScheduleManager {
       constructor() {
         this.data = {};
+        this.selectedDays = []; // 선택한 요일 저장
         this.loadData();
       }
 
@@ -163,7 +226,8 @@
             <p><strong>요일:</strong> ${classInfo.class_days.map(day => daysOfWeek[day - 1]).join(', ')}</p>
             <p><strong>시간:</strong> ${classInfo.start_time} - ${classInfo.end_time}</p>
             <p><strong>위치:</strong> ${classInfo.location}</p>
-            <button onclick="scheduleManager.deleteClass(${index})">삭제</button>
+            <button onclick="scheduleManager.deleteClass(${index})" id="deleteButton">삭제</button>
+            <hr style="background: #b93234; height:0.5px; border:0; margin-bottom: 30px">
           `;
           scheduleList.appendChild(classDiv);
         });
@@ -174,17 +238,17 @@
         const startTime = document.getElementById('newStartTime').value;
         const endTime = document.getElementById('newEndTime').value;
         const location = document.getElementById('newLocation').value;
-        const classDays = [...document.querySelectorAll('.day-button.selected')].map(button => parseInt(button.dataset.day));
 
-        if (className && startTime && endTime && location) {
+        if (className && startTime && endTime && location && this.selectedDays.length > 0) {
           this.data.schedule.push({
             class_name: className,
-            class_days: classDays,
+            class_days: this.selectedDays,
             start_time: startTime,
             end_time: endTime,
             location: location
           });
           this.displaySchedule();
+          this.clearInputs();
         }
       }
 
@@ -195,40 +259,44 @@
 
       renderDayButtons() {
         const daysDiv = document.getElementById('newClassDays');
+        const selectedDaysDisplay = document.getElementById('selectedDays');
         daysDiv.innerHTML = '';
+
         daysOfWeek.forEach((day, index) => {
           const button = document.createElement('button');
           button.classList.add('day-button');
           button.dataset.day = index + 1;
           button.textContent = day;
-          button.onclick = () => button.classList.toggle('selected');
+          button.onclick = () => {
+            button.classList.toggle('selected');
+            const dayIndex = index + 1;
+            if (this.selectedDays.includes(dayIndex)) {
+              this.selectedDays = this.selectedDays.filter(d => d !== dayIndex);
+            } else {
+              this.selectedDays.push(dayIndex);
+            }
+            selectedDaysDisplay.textContent = `선택한 요일: ${this.selectedDays.map(d => daysOfWeek[d - 1]).join(', ') || '없음'}`;
+          };
           daysDiv.appendChild(button);
         });
       }
 
-      async saveSchedule() {
-        try {
-          const response = await fetch('changetable.json', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(this.data),
-          });
+      clearInputs() {
+        document.getElementById('newClassName').value = '';
+        document.getElementById('newStartTime').value = '';
+        document.getElementById('newEndTime').value = '';
+        document.getElementById('newLocation').value = '';
+        this.selectedDays = [];
+        this.renderDayButtons();
+      }
 
-          if (response.ok) {
-            console.log("시간표가 성공적으로 저장되었습니다.");
-          } else {
-            console.error("시간표 저장 중 오류 발생:", response.statusText);
-          }
-        } catch (error) {
-          console.error("시간표 저장 중 오류 발생:", error);
-        }
+      saveSchedule() {
+        alert("시간표가 저장되었습니다.");
+        window.close(); // 창 닫기
       }
     }
 
     const scheduleManager = new ScheduleManager();
-    document.getElementById('saveScheduleButton').addEventListener('click', () => scheduleManager.saveSchedule());
   </script>
 </body>
 </html>
