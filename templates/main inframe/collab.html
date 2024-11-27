@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>collab</title>
-  <link rel="stylesheet" href="../../static/csss/integrated.css">
+  <link rel="stylesheet" href="collab.css">
   <style>
     @font-face {
       font-family: 'SMUSnowflake-Bold';
@@ -24,22 +24,31 @@
       justify-content: center;
     }
 
-    .content {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding-top: 20px;
-    }
+      
+      .content {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 20px;
+      }
 
-    .container {
-      width: 90%;
-      max-width: 600px;
-      padding: 20px;
-      background: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      overflow-y: auto;
-    }
+      .schedule-container {
+        justify-content: center;
+        align-items: flex-start;
+        padding-top: 20px;
+      }
 
+
+
+      .container {
+        width: 90%;
+        max-width: 600px;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
+      }
+      
     h1 {
       margin-top: 30px;
       font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
@@ -50,59 +59,83 @@
       font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
       text-align: center;
     }
+      
+      .input-group {
+        margin-bottom: 20px;
+      }
+      
+      #result {
+        margin-top: 20px;
+      }
+      
+      button {
+        padding: 10px 15px;
+        
+        background-color: #b93234;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 50%;
+        padding: 10px;
+      }
 
-    button {
-      padding: 10px 15px;
-      background-color: #b93234;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      width: 50%;
-    }
+      input {
+        margin-top: 10px;
+        padding: 10px;
+      }
+      
+      button:hover {
+        background-color: #a12b2d;
+      }
 
-    input {
-      margin-top: 10px;
-      padding: 10px;
-    }
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
 
-    button:hover {
-      background-color: #a12b2d;
-    }
-
-    #schedule-table-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      max-width: 500px;
-    }
-
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-
-    th, td {
-      padding: 8px;
-      text-align: center;
-    }
-
-    td.free {
-      background-color: #c3f0c8;
-    }
-
-    td.busy {
-      background-color: #f5c6cb;
-    }
+      .input-group {
+        width: 100%;
+        max-width: 300px; /* Adjust width as desired */
+        font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+        text-align: center;
+        margin-bottom: 15px;
+      }
+      
+      #schedule-table-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        max-height: 400px; /* 지정된 높이 */
+        overflow-y: auto;  /* 세로 스크롤 */
+      }
+      
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 500px;
+      }
+      
+      table, th, td {
+        border: 1px solid #ccc;
+      }
+      
+      th, td {
+        padding: 8px;
+        text-align: center;
+      }
+      
+      td.free {
+        background-color: #c3f0c8;
+      }
+      
+      td.busy {
+        background-color: #f5c6cb;
+      }
   </style>
 </head>
 <body>
@@ -112,40 +145,341 @@
   <hr style="width: 50%; margin-top: 0;">
   <div id="schedule-container"></div>
 
-  <input type="file" id="json-files" multiple accept=".json">
-  <button onclick="loadDataAndFindFreeTime()">공통 여유 시간 찾기</button>
-  <div id="schedule-table-container"></div>
-
+  <div class="schedule-container">
+    <div class="form-group">
+      <div class="input-group">
+        <label for="student-names">학생 이름 입력 (쉼표로 구분):</label>
+        <input type="text" id="student-names" placeholder="예: 이헌성, 김태경">
+      </div>
+      <button onclick="findCommonFreeTime()">공통 빈 시간대 찾기</button>
+    </div>
+    <div id="result">
+      <div id="schedule-table-container"></div>
+    </div>
+  </div>
   <script>
-    class StudentScheduler {
-      constructor() {
-        this.studentData = [];
-      }
-
-      async loadStudentData(files) {
-        this.studentData = [];
-        for (let file of files) {
-          const fileContent = await file.text();
-          const parsedData = JSON.parse(fileContent);
-          parsedData.fileName = file.name;
-          this.studentData.push(parsedData);
+    const studentData = [
+      {
+        "info": {
+          "name": "이헌성",
+          "number": "21011898"
+        },
+        "schedule": [
+          {
+            "class_name": "신시",
+            "class_days": [1, 3, 5],
+            "start_time": "10:30",
+            "end_time": "12:00",
+            "location": "센B204"
+          },
+          {
+            "class_name": "창기정",
+            "class_days": [3],
+            "start_time": "13:30",
+            "end_time": "15:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "erp",
+            "class_days": [4],
+            "start_time": "13:30",
+            "end_time": "15:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "확통",
+            "class_days": [1, 3],
+            "start_time": "16:30",
+            "end_time": "18:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "알고리즘",
+            "class_days": [5],
+            "start_time": "13:00",
+            "end_time": "15:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "동시모",
+            "class_days": [2, 4],
+            "start_time": "16:30",
+            "end_time": "18:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "ml",
+            "class_days": [2],
+            "start_time": "19:00",
+            "end_time": "21:00",
+            "location": "동천관418"
+          }
+        ]
+      },
+      {
+        "info": {
+          "name": "김태경",
+          "number": "23011927"
+        },
+        "schedule": [
+          {
+            "class_name": "선형대수및프로그래밍",
+            "class_days": [1, 3],
+            "start_time": "10:30",
+            "end_time": "12:00",
+            "location": "센B204"
+          },
+          {
+            "class_name": "창호강",
+            "class_days": [4],
+            "start_time": "16:30",
+            "end_time": "18:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "비전공조교",
+            "class_days": [1],
+            "start_time": "12:00",
+            "end_time": "13:30",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "전공조교",
+            "class_days": [2],
+            "start_time": "16:00",
+            "end_time": "18:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "신시",
+            "class_days": [3],
+            "start_time": "18:00",
+            "end_time": "21:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "웹프",
+            "class_days": [4],
+            "start_time": "18:00",
+            "end_time": "21:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "ml",
+            "class_days": [2],
+            "start_time": "19:00",
+            "end_time": "21:00",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "알고리즘",
+            "class_days": [4],
+            "start_time": "13:30",
+            "end_time": "15:30",
+            "location": "동천관418"
+          },
+          {
+            "class_name": "금공강",
+            "class_days": [5],
+            "start_time": "09:00",
+            "end_time": "24:00",
+            "location": "동천관418"
+          }
+        ]
+      },
+      {
+          "info": {
+            "name": "권효정",
+            "number": "22011925"
+          },
+          "schedule": [
+            {
+              "class_name": "사물인터넷",
+              "class_days": [1, 3],
+              "start_time": "16:30",
+              "end_time": "18:00",
+              "location": "센B204"
+            },
+            {
+              "class_name": "인공지능",
+              "class_days": [2, 4],
+              "start_time": "13:30",
+              "end_time": "15:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "중국문화의이해",
+              "class_days": [2, 4],
+              "start_time": "12:00",
+              "end_time": "13:30",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "로보틱스",
+              "class_days": [1, 3],
+              "start_time": "10:30",
+              "end_time": "12:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "랩미팅",
+              "class_days": [1],
+              "start_time": "12:30",
+              "end_time": "13:30",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "사물인터넷스터디",
+              "class_days": [1],
+              "start_time": "13:30",
+              "end_time": "15:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "nlp",
+              "class_days": [1, 2],
+              "start_time": "16:30",
+              "end_time": "18:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "연구실",
+              "class_days": [3],
+              "start_time": "13:30",
+              "end_time": "16:30",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "프로젝트",
+              "class_days": [3],
+              "start_time": "18:00",
+              "end_time": "21:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "임베디드",
+              "class_days": [5],
+              "start_time": "12:00",
+              "end_time": "15:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "sw코딩",
+              "class_days": [5],
+              "start_time": "15:00",
+              "end_time": "16:30",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "인공지능",
+              "class_days": [2, 4],
+              "start_time": "20:00",
+              "end_time": "21:00",
+              "location": "동천관418"
+            }
+          ]
+        },
+        {
+          "info": {
+            "name": "김하연",
+            "number": "23011881"
+          },
+          "schedule": [
+            {
+              "class_name": "근로 오전",
+              "class_days": [1, 2, 3],
+              "start_time": "09:00",
+              "end_time": "13:00",
+              "location": "센B204"
+            },
+            {
+              "class_name": "신시",
+              "class_days": [1, 3],
+              "start_time": "13:30",
+              "end_time": "15:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "ml",
+              "class_days": [2],
+              "start_time": "19:00",
+              "end_time": "21:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "알고리즘",
+              "class_days": [2],
+              "start_time": "13:30",
+              "end_time": "15:30",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "확통",
+              "class_days": [1, 3],
+              "start_time": "16:30",
+              "end_time": "18:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "데분스",
+              "class_days": [1],
+              "start_time": "19:00",
+              "end_time": "21:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "공수",
+              "class_days": [2, 4],
+              "start_time": "16:30",
+              "end_time": "18:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "동서양",
+              "class_days": [2],
+              "start_time": "18:00",
+              "end_time": "19:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "목 근로",
+              "class_days": [4],
+              "start_time": "11:00",
+              "end_time": "14:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "금 근로",
+              "class_days": [5],
+              "start_time": "11:00",
+              "end_time": "17:00",
+              "location": "동천관418"
+            },
+            {
+              "class_name": "웹프",
+              "class_days": [4],
+              "start_time": "18:00",
+              "end_time": "21:00",
+              "location": "동천관418"
+            }
+          ]
         }
-      }
-
-      parseTime(timeStr) {
+    ]
+      
+      function parseTime(timeStr) {
         const [hours, minutes] = timeStr.split(':').map(Number);
         return hours * 60 + minutes;
       }
-
-      getFreeTimeForStudent(schedule) {
+      
+      function getFreeTimeForStudent(schedule) {
         const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
-
+        
         schedule.forEach(({ class_days, start_time, end_time }) => {
-          const startTime = this.parseTime(start_time);
-          const endTime = this.parseTime(end_time);
+          const startTime = parseTime(start_time);
+          const endTime = parseTime(end_time);
           class_days.forEach(day => {
             for (let time = startTime; time < endTime; time += 30) {
-              const timeSlot = (time - 540) / 30;
+              const timeSlot = (time - 540) / 30; // Adjusted for 9:00 (540 minutes) start
               if (timeSlot >= 0 && timeSlot < 30) {
                 freeTimes[day - 1][timeSlot] = false;
               }
@@ -154,49 +488,54 @@
         });
         return freeTimes;
       }
-
-      findCommonFreeTime() {
-        if (this.studentData.length === 0) {
-          alert("학생 데이터가 없습니다.");
+      
+      function findCommonFreeTime() {
+        const inputNames = document.getElementById('student-names').value.split(',').map(name => name.trim());
+        const selectedStudents = studentData.filter(student => inputNames.includes(student.info.name));
+      
+        if (selectedStudents.length === 0) {
+          alert("일치하는 학생이 없습니다.");
           return;
         }
-
+      
         let commonFreeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
-
-        this.studentData.forEach(student => {
-          const studentFreeTimes = this.getFreeTimeForStudent(student.schedule);
+      
+        selectedStudents.forEach(student => {
+          const studentFreeTimes = getFreeTimeForStudent(student.schedule);
           commonFreeTimes = commonFreeTimes.map((day, dayIndex) => 
             day.map((time, timeIndex) => time && studentFreeTimes[dayIndex][timeIndex])
           );
         });
-
-        this.displayScheduleTable(commonFreeTimes);
+      
+        displayScheduleTable(commonFreeTimes);
       }
-
-      displayScheduleTable(freeTimes) {
+      
+      function displayScheduleTable(freeTimes) {
         const container = document.getElementById('schedule-table-container');
-        container.innerHTML = '';  
-
+        container.innerHTML = '';  // Clear previous content
+      
         const table = document.createElement('table');
         const headerRow = document.createElement('tr');
         
+        // Header Row with Days
         const days = ["월요일", "화요일", "수요일", "목요일", "금요일"];
-        headerRow.appendChild(document.createElement('th')); 
+        headerRow.appendChild(document.createElement('th')); // Empty cell for time labels
         days.forEach(day => {
           const th = document.createElement('th');
           th.textContent = day;
           headerRow.appendChild(th);
         });
         table.appendChild(headerRow);
-
-        for (let minutes = 540; minutes < 1440; minutes += 30) { 
+      
+        // Create rows for each 30-minute time slot from 9:00 to 24:00
+        for (let minutes = 540; minutes < 1440; minutes += 30) { // 540 = 9:00, 1440 = 24:00
           const row = document.createElement('tr');
           const timeCell = document.createElement('th');
           const hour = Math.floor(minutes / 60);
           const minute = minutes % 60;
           timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
           row.appendChild(timeCell);
-
+      
           freeTimes.forEach(day => {
             const timeSlot = (minutes - 540) / 30;
             const cell = document.createElement('td');
@@ -206,18 +545,11 @@
           });
           table.appendChild(row);
         }
-
+      
         container.appendChild(table);
       }
-    }
+  
 
-    const scheduler = new StudentScheduler();
-
-    async function loadDataAndFindFreeTime() {
-      const files = document.getElementById('json-files').files;
-      await scheduler.loadStudentData(files);
-      scheduler.findCommonFreeTime();
-    }
   </script>
 </body>
 </html>

@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Click</title>
     <link rel="stylesheet" href="/static/csss/integrated.css">
-    
+
     <style>
-        /* main.css 내용 */
         @font-face {
             font-family: 'SMUSnowflake-Bold';
             src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
@@ -31,13 +30,13 @@
 
         .container {
             display: flex;
+            flex-direction: row;
             height: 100%;
         }
 
         iframe {
-            width: 85%;
-            height: 100%;
             background-color: white;
+            border: none;
         }
 
         #side {
@@ -46,26 +45,51 @@
             background-color: #b93234;
         }
 
-        .content {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+        #contentFrame {
             width: 85%;
-            padding-top: 20px;
+            height: 100%;
         }
 
-        h1 {
-            margin-top: 50px;
-            font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
-            font-size: 40px;
+        /* 모바일 스타일 적용 */
+        @media screen and (max-width: 768px) {
+            .container {
+                flex-direction: column; /* 모바일에서는 상단에 사이드바 배치 */
+            }
+
+            #side {
+                width: 100%;
+                height: 10%; /* 모바일에서 상단 10% */
+            }
+
+            #contentFrame {
+                width: 100%;
+                height: 90%; /* 나머지 90% */
+            }
         }
     </style>
-
 </head>
 <body>
     <div class="container">
-        <iframe src="main inframe/sideBar.html" id="side" frameborder="0"></iframe>
-        <iframe src="main inframe/mySchedule.html" id="contentFrame" frameborder="0"></iframe>
+        <iframe id="side" frameborder="0"></iframe>
+        <iframe id="contentFrame" src="main inframe/mySchedule.html" frameborder="0"></iframe>
     </div>
+
+    <script>
+        // JavaScript로 모바일 여부 확인 및 iframe 변경
+        function loadSideBar() {
+            const sideFrame = document.getElementById("side");
+            if (window.innerWidth <= 768) {
+                // 모바일: sideBar_mobile.html 로드
+                sideFrame.src = "main inframe/sideBar_mobile.html";
+            } else {
+                // 데스크탑: sideBar.html 로드
+                sideFrame.src = "main inframe/sideBar.html";
+            }
+        }
+
+        // 초기 로드 및 윈도우 크기 변경 시 적용
+        window.addEventListener("load", loadSideBar);
+        window.addEventListener("resize", loadSideBar);
+    </script>
 </body>
 </html>

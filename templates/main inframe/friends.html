@@ -186,6 +186,68 @@
       background-color: #a12b2d;
     }
   </style>
+
+  <style>
+    /* 기존 스타일은 유지 */
+
+    /* 모바일 스타일 추가 */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 30px; /* 제목 크기 축소 */
+      }
+
+      #content1 {
+        flex-direction: column; /* 친구 목록과 시간표를 세로로 배치 */
+        align-items: center; /* 세로 정렬 중앙 */
+      }
+
+      #friend-list {
+        width: 90%; /* 친구 목록 너비 확대 */
+        margin-bottom: 20px; /* 아래쪽 여백 추가 */
+      }
+
+      .friend-buttons button {
+        width: 100%; /* 버튼 너비를 100%로 확장 */
+        font-size: 14px; /* 버튼 글씨 크기 축소 */
+        padding: 10px; /* 버튼 패딩 조정 */
+      }
+
+      .search-container input {
+        width: 100%; /* 검색창 너비를 친구 목록에 맞춤 */
+      }
+
+      #schedule-container {
+        width: 95%; /* 시간표 너비 조정 */
+      }
+
+      .schedule-table {
+        font-size: 12px; /* 테이블 글씨 크기 축소 */
+        width: 100%; /* 테이블이 화면 전체를 차지하도록 */
+        border-radius: 10px;
+      }
+
+      .schedule-table th, .schedule-table td {
+        padding: 5px; /* 셀 패딩 조정 */
+        height: 25px; /* 셀 높이 축소 */
+      }
+
+      .friend-controls {
+        position: static; /* 위치 고정을 제거하여 자연스럽게 배치 */
+        margin-top: 10px;
+      }
+
+      .friend-controls button {
+        width: 50%; /* 버튼 너비 확대 */
+        font-size: 14px; /* 버튼 글씨 크기 축소 */
+        padding: 8px 10px; /* 버튼 패딩 조정 */
+      }
+
+      #friendSearch {
+        width: 93%;
+      }
+    }
+  </style>
+
 </head>
 <body>
   <div class="friend-controls">
@@ -198,7 +260,7 @@
       <h1>친구 시간표</h1>
       <hr style="width: 50%; margin-top: 0;">
     </div>
-    
+
     <div id="content1">
       <div id="friend-list">
         <h2>친구 목록</h2>
@@ -265,6 +327,10 @@
       if (friendSchedule) {
         const scheduleRenderer = new ScheduleRenderer("schedule-container");
         scheduleRenderer.showSchedule(friendSchedule);
+
+        // 스크롤 이동
+        const scheduleContainer = document.getElementById("schedule-container");
+        scheduleContainer.scrollIntoView({ behavior: "smooth", block: "start" });
       } else {
         console.error("Schedule not found for:", friendName);
       }

@@ -112,7 +112,7 @@
   <div class="login-container">
     <h1>로그인</h1>
     <form id="loginForm">
-      <label for="studentId">학번</label>
+      <label for="studentId">아이디</label>
       <input type="text" id="studentId" name="studentId">
       <p id="studentIdMessage"></p> <!-- 학번 오류 메시지 -->
       
@@ -144,7 +144,7 @@
 
       // 학번 유효성 검사
       if (!studentId) {
-        document.getElementById('studentIdMessage').textContent = "학번이 입력되지 않았습니다.";
+        document.getElementById('studentIdMessage').textContent = "아이디가 입력되지 않았습니다.";
         hasError = true;
       }
 
@@ -159,25 +159,27 @@
 
       try {
         // 서버로 데이터 전송
-        const response = await fetch('https://login-juko.onrender.com/login', { //해당 링크에 학번, 비번 전송
-          method: 'POST', // POST 요청
+        const response = await fetch('http://127.0.0.1:5002/login', { // 플라스크 서버 주소
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json', // JSON 데이터 전송
           },
-          body: JSON.stringify({ studentId, password }), // 입력값 JSON 변환
+          body: JSON.stringify({ id: studentId, pw: password }), // 입력값 JSON 변환
         });
 
         const result = await response.json(); // 서버 응답 데이터 받기
 
-        if (response.ok) {
-          alert(result.message); // 성공 메시지 출력
-          window.location.href = "/home"; // 홈 페이지로 이동
+        if (result.status === 'success') {
+          document.getElementById('message').textContent = "로그인이 성공하였습니다.";
+          document.getElementById('message').style.color = 'green';
         } else {
           document.getElementById('message').textContent = result.message; // 실패 메시지 출력
+          document.getElementById('message').style.color = 'red';
         }
       } catch (error) {
         console.error("서버 요청 중 오류가 발생했습니다.", error); // 오류 로그 출력
         document.getElementById('message').textContent = "서버 오류가 발생했습니다. 나중에 다시 시도해 주세요."; // 오류 메시지 출력
+        document.getElementById('message').style.color = 'red';
       }
     });
   </script>

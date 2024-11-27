@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mobile SideBar</title>
+
+  <style>
+    @font-face {
+      font-family: 'SMUSnowflake-Bold';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'SMUSnowflake-Regular';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2409-2@1.0/SMUSnowflake-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #b93234;
+      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    #sidebar {
+      display: flex;
+      flex-direction: row; /* 버튼들을 가로로 배치 */
+      justify-content: space-around;
+      align-items: center;
+      height: 100%;
+      background-color: #b93234;
+    }
+
+    .sidebar-button {
+      display: inline-block;
+      width: 30%; /* 버튼 너비를 화면 비율에 맞춤 */
+      height: 60%; /* 버튼 높이를 조정 */
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      font-size: 14px;
+      color: white;
+      background-color: transparent;
+      border: 2px solid white;
+      border-radius: 10px;
+      text-align: center;
+      line-height: 150%; /* 버튼 안의 텍스트 정렬 */
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .sidebar-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div id="sidebar">
+    <button class="sidebar-button" onclick="loadPage('main inframe/mySchedule.html')">내 시간표</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/friends.html')">친구 시간표</button>
+    <button class="sidebar-button" onclick="loadPage('main inframe/collab.html')">시간표 협업</button>
+  </div>
+
+  <script>
+    function loadPage(page) {
+      // 부모 페이지의 contentFrame src 속성을 변경하여 페이지 로드
+      window.parent.document.getElementById("contentFrame").src = page;
+    }
+  </script>
+</body>
+</html>

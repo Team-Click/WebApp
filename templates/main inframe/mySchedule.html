@@ -44,11 +44,11 @@
                   0 0 3px #ddd,
                   0 0 3px #ddd;
       margin: auto;
-      width: 70%; /* 화면의 70%로 설정 */
+      width: 70%;
       border-collapse: collapse;
       table-layout: fixed;
-      border-radius: 20px; /* 테이블 외곽 둥글게 설정 */
-      overflow: hidden; /* 둥근 모서리가 잘리도록 설정 */
+      border-radius: 20px;
+      overflow: hidden;
     }
 
     .schedule-table th,
@@ -74,10 +74,9 @@
     }
 
     .mySchedule-buttons {
-      position: absolute;
-      top: 20px;
-      right: 20px;
       display: flex;
+      justify-content: center;
+      margin-top: 20px;
       gap: 10px;
     }
 
@@ -96,14 +95,41 @@
     .mySchedule-buttons button:hover {
       background-color: #a12b2d;
     }
+
+    /* 모바일 스타일 */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 30px;
+      }
+
+      .schedule-table {
+        width: 95%;
+        font-size: 12px;
+        border-radius: 10px;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 3px;
+        height: 25px;
+      }
+
+      .mySchedule-buttons {
+        margin-left: 25%;
+        flex-direction: column;
+        width: 50%;
+        margin-top: 15px;
+        gap: 5px;
+      }
+
+      .mySchedule-buttons button {
+        font-size: 14px;
+        padding: 8px 10px;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="mySchedule-buttons">
-    <button onclick="openUploadWindow()">시간표 등록/변경</button>
-    <button onclick="openchangeWindow()">시간표 수정</button>
-  </div>
-
   <div class="content">
     <h1>내 시간표</h1>
   </div>
@@ -112,9 +138,16 @@
     <div id="schedule-container"></div>
   </div>
 
+  <!-- 버튼 섹션 -->
+  <div class="mySchedule-buttons">
+    <button onclick="openUploadWindow()">시간표 등록/변경</button>
+    <button onclick="openchangeWindow()">시간표 수정</button>
+  </div>
+
+  <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>
+
   <script src="../../static/tools.js"></script>
   <script>
-    // 내 시간표 기능 구현
     async function loadMySchedule() {
       try {
         const response = await fetch("../../tests/이헌성.json");
@@ -127,43 +160,10 @@
       }
     }
 
-    //loadMySchedule함수의 서버 연결 버전
-    /*
-
-        async function loadMySchedule() {
-      try {
-        // 로그인한 사용자 시간표 데이터를 백엔드에서 요청
-        const response = await fetch("/api/schedule", {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${localStorage.getItem("token")}`, // JWT 토큰을 헤더에 포함
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch schedule data");
-
-        const myScheduleData = await response.json();
-
-        // 시간표 데이터를 렌더링
-        const scheduleRenderer = new ScheduleRenderer("schedule-container");
-        scheduleRenderer.showSchedule(myScheduleData);
-      } catch (error) {
-        console.error("Failed to load my schedule:", error);
-        document.getElementById("schedule-container").innerHTML = `
-          <p>시간표를 불러오는 데 실패했습니다. 다시 시도해 주세요.</p>
-        `;
-      }
-    }
-
-    */
-
-    // 페이지 로드 시 내 시간표 불러오기
     document.addEventListener("DOMContentLoaded", () => {
       loadMySchedule();
     });
 
-    // 시간표 등록/변경 및 수정 관련 함수
     function openUploadWindow() {
       window.open("UploadForm/imageUpload.html", "이미지 등록", "width=500,height=300");
     }
