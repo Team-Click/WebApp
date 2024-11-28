@@ -98,21 +98,78 @@
     }
 
     .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      background-color: white;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* 모바일 화면에서도 잘 보이도록 유동적인 크기 */
+  max-width: 400px; /* 최대 크기 제한 */
+  background-color: #ffffff;
+  padding: 20px;
+  border: none;
+  border-radius: 15px; /* 둥근 모서리 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 추가 */
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
 
-    .modal-content {
-      text-align: center;
-    }
+.modal-content {
+  text-align: center;
+  font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+  color: #333; /* 텍스트 색상 변경 */
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #b93234; /* 닫기 버튼 색상 */
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.close:hover {
+  color: #a12b2d; /* 마우스 오버 시 색상 변경 */
+  transform: scale(1.2); /* 마우스 오버 시 확대 효과 */
+}
+
+.modal input {
+  width: 70%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.modal button {
+  width: 30%;
+  padding: 7px;
+  margin: 10px;
+  font-size: 16px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  color: #ffffff;
+  background-color: #b93234; /* 버튼 배경색 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.modal button:hover {
+  background-color: #a12b2d; /* 버튼 마우스 오버 색상 */
+  transform: scale(1.05); /* 버튼 마우스 오버 시 확대 효과 */
+}
+
+.modal h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+  color: #b93234; /* 헤더 색상 */
+}
 
     .close {
       position: absolute;
@@ -185,6 +242,20 @@
     .friend-controls button:hover {
       background-color: #a12b2d;
     }
+
+    #followButton {
+      padding: 10px 15px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: white;
+      background-color: #b93234;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .modal-content {
+      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+    }
   </style>
 
   <style>
@@ -245,6 +316,52 @@
       #friendSearch {
         width: 93%;
       }
+
+      .modal {
+    width: 85%; /* 화면 너비의 90%로 조정 */
+    max-width: none; /* 최대 너비 제한 제거 */
+    padding: 15px; /* 내부 여백 축소 */
+    border-radius: 10px; /* 둥근 모서리 크기 축소 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* 그림자 크기 조정 */
+  }
+
+  .modal-content {
+    text-align: center;
+    font-size: 17px; /* 글꼴 크기 축소 */
+  }
+
+  .modal h2 {
+    font-size: 25px; /* 제목 크기 축소 */
+    margin-bottom: 15px; /* 아래 여백 축소 */
+  }
+
+  .modal label {
+    margin-right: 10px;
+  }
+
+  .modal input {
+    margin: 10px;
+    width: 70%; /* 입력 필드 너비를 70%로 확장 */
+    padding: 8px; /* 패딩 조정 */
+    font-size: 14px; /* 글꼴 크기 유지 */
+  }
+
+  .modal button {
+    width: 70%; /* 버튼 너비를 70%로 설정 */
+    padding: 10px; /* 패딩 조정 */
+    margin: 10px 0; /* 위아래 여백 추가 */
+    font-size: 14px; /* 글꼴 크기 축소 */
+  }
+
+  .close {
+    top: 5px; /* 닫기 버튼 위치 조정 */
+    right: 5px;
+    font-size: 25px; /* 크기 축소 */
+  }
+
+  #friend-list {
+    margin-bottom: 20px; /* 추가 여백 */
+  }
     }
   </style>
 
@@ -280,11 +397,11 @@
           <div class="modal-content">
             <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
             <h2>친구 추가</h2>
-            <label for="studentId">학번</label>
-            <input type="text" id="studentId">
-            <label for="name">이름</label>
-            <input type="text" id="name">
-            <button onclick="followUser()">팔로우</button>
+            <label for="studentId" class="studentId" style="margin-right: 5px; font-size: 18px;">학번</label>
+            <input type="text" class="studentId"> <br>
+            <label for="name" class="name" style="margin-right: 5px; font-size: 18px;">이름</label>
+            <input type="text" class="name"> <br><br>
+            <button onclick="followUser()" id="followButton">팔로우</button>
           </div>
         </div>
       </div>
@@ -300,10 +417,10 @@
       <span class="close" onclick="closeModal('removeFriendModal')">&times;</span>
       <h2>친구 삭제</h2>
       <ul id="remove-friends-list">
-        <li>이헌성 <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
-        <li>김태경 <button onclick="unfollowUser('김태경')">언팔로우</button></li>
-        <li>권효정 <button onclick="unfollowUser('권효정')">언팔로우</button></li>
-        <li>김하연 <button onclick="unfollowUser('김하연')">언팔로우</button></li>
+        <li>이헌성 &nbsp; <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
+        <li>김태경 &nbsp; <button onclick="unfollowUser('김태경')">언팔로우</button></li>
+        <li>권효정 &nbsp; <button onclick="unfollowUser('권효정')">언팔로우</button></li>
+        <li>김하연 &nbsp; <button onclick="unfollowUser('김하연')">언팔로우</button></li>
       </ul>
     </div>
   </div>
