@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -20,8 +21,221 @@
       font-style: normal;
     }
 
-    body {
-      font-family: 'Arial', sans-serif;
+    html {
+      overflow-y: scroll;
+      /* 세로 스크롤 바 항상 표시 */
+    }
+
+    .content {
+      justify-content: center;
+      align-items: flex-start;
+      padding-top: 20px;
+    }
+
+    #title1 {
+      display: block;
+      width: 100%;
+    }
+
+    #content1 {
+      display: flex;
+      align-items: flex-start;
+      /* 각 요소가 위쪽에 정렬되고 고유 높이를 유지 */
+      width: 100%;
+      justify-content: space-around;
+    }
+
+    h2 {
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: #b93234;
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 30px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      font-size: 50px;
+    }
+
+    #friend-list {
+      text-align: center;
+      margin: 50px;
+      padding: 10px;
+      width: 20%;
+      border: 1px solid #ffffff;
+      box-shadow: 3px 3px 5px #ddd,
+        0 0 5px #ddd;
+    }
+
+    .friend-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .friend-buttons button {
+      width: 40%;
+      padding: 10px;
+      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+      background-color: #f4f4f4;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .friend-buttons button:hover {
+      background-color: #e0e0e0;
+    }
+
+    .search-container {
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      width: 90%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      /* 모바일 화면에서도 잘 보이도록 유동적인 크기 */
+      max-width: 400px;
+      /* 최대 크기 제한 */
+      background-color: #ffffff;
+      padding: 20px;
+      border: none;
+      border-radius: 15px;
+      /* 둥근 모서리 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      /* 그림자 효과 추가 */
+      z-index: 1000;
+      /* 다른 요소 위에 표시 */
+    }
+
+    .modal-content {
+      text-align: center;
+      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
+      color: #333;
+      /* 텍스트 색상 변경 */
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #b93234;
+      /* 닫기 버튼 색상 */
+      cursor: pointer;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    .close:hover {
+      color: #a12b2d;
+      /* 마우스 오버 시 색상 변경 */
+      transform: scale(1.2);
+      /* 마우스 오버 시 확대 효과 */
+    }
+
+    .modal input {
+      width: 70%;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    .modal button {
+      width: 30%;
+      padding: 7px;
+      margin: 10px;
+      font-size: 16px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: #ffffff;
+      background-color: #b93234;
+      /* 버튼 배경색 */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .modal button:hover {
+      background-color: #a12b2d;
+      /* 버튼 마우스 오버 색상 */
+      transform: scale(1.05);
+      /* 버튼 마우스 오버 시 확대 효과 */
+    }
+
+    .modal h2 {
+      margin-bottom: 20px;
+      font-size: 24px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: #b93234;
+      /* 헤더 색상 */
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+
+    #schedule-container {
+      width: 80%;
+    }
+
+    .schedule-table {
+      border: 1px solid #ffffff;
+      box-shadow: 3px 3px 5px #ddd,
+        0 0 3px #ddd,
+        0 0 3px #ddd;
+      margin: auto;
+      margin-top: 40px;
+      margin-bottom: 50px;
+      width: 90%;
+      /* 화면의 70%로 설정 */
+      border-collapse: collapse;
+      table-layout: fixed;
+      border-radius: 20px;
+      /* 테이블 외곽 둥글게 설정 */
+      overflow: hidden;
+      /* 둥근 모서리가 잘리도록 설정 */
+    }
+
+    .schedule-table th,
+    .schedule-table td {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 5px;
+      height: 30px;
+      font-size: 13px;
+      word-wrap: break-word;
+    }
+
+    .schedule-table th {
+      background-color: #b93234;
+      color: white;
+      font-size: 15px;
+      padding: 1.0%;
+    }
+
+    .schedule-table .class-cell {
+      background-color: #f0f0f0;
+      font-weight: bold;
     }
 
     .friend-controls {
@@ -33,7 +247,23 @@
     }
 
     .friend-controls button {
-      padding: 10px;
+      padding: 10px 15px;
+      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
+      color: white;
+      background-color: #b93234;
+      border: none;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .friend-controls button:hover {
+      background-color: #a12b2d;
+    }
+
+    #followButton {
+      padding: 10px 15px;
       font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
       color: white;
       background-color: #b93234;
@@ -42,86 +272,157 @@
       cursor: pointer;
     }
 
-    h1, h2 {
-      font-family: 'SMUSnowflake-Bold', Arial, sans-serif;
-      color: #b93234;
-    }
-
-    #friend-list {
-      margin-left: 50px;
-    }
-
-    .friend-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .friend-buttons button {
-      width: 150px;
-      padding: 10px;
-      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
-      background-color: #f4f4f4;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      cursor: pointer;
-      text-align: left;
-    }
-
-    .friend-buttons button:hover {
-      background-color: #e0e0e0;
-    }
-
-    .modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 300px;
-      background-color: white;
-      padding: 20px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-    }
-
     .modal-content {
-      text-align: center;
-    }
-
-    .close {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-    }
-
-    .schedule-table {
-      width: 100%;
-      border-collapse: collapse;
-      table-layout: fixed;
-    }
-
-    .schedule-table th,
-    .schedule-table td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 5px;
-      height: 30px;
-      font-size: 12px;
-      word-wrap: break-word;
-    }
-
-    .schedule-table th {
-      background-color: #f4f4f4;
-    }
-
-    .schedule-table .class-cell {
-      background-color: #e0e0e0;
-      font-weight: bold;
+      font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
     }
   </style>
+
+  <style>
+    /* 기존 스타일은 유지 */
+
+    /* 모바일 스타일 추가 */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 30px;
+        /* 제목 크기 축소 */
+      }
+
+      #content1 {
+        flex-direction: column;
+        /* 친구 목록과 시간표를 세로로 배치 */
+        align-items: center;
+        /* 세로 정렬 중앙 */
+      }
+
+      #friend-list {
+        width: 90%;
+        /* 친구 목록 너비 확대 */
+        margin-bottom: 20px;
+        /* 아래쪽 여백 추가 */
+      }
+
+      .friend-buttons button {
+        width: 100%;
+        /* 버튼 너비를 100%로 확장 */
+        font-size: 14px;
+        /* 버튼 글씨 크기 축소 */
+        padding: 10px;
+        /* 버튼 패딩 조정 */
+      }
+
+      .search-container input {
+        width: 100%;
+        /* 검색창 너비를 친구 목록에 맞춤 */
+      }
+
+      #schedule-container {
+        width: 95%;
+        /* 시간표 너비 조정 */
+      }
+
+      .schedule-table {
+        font-size: 12px;
+        /* 테이블 글씨 크기 축소 */
+        width: 100%;
+        /* 테이블이 화면 전체를 차지하도록 */
+        border-radius: 10px;
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 5px;
+        /* 셀 패딩 조정 */
+        height: 25px;
+        /* 셀 높이 축소 */
+      }
+
+      .friend-controls {
+        position: static;
+        /* 위치 고정을 제거하여 자연스럽게 배치 */
+        margin-top: 10px;
+      }
+
+      .friend-controls button {
+        width: 50%;
+        /* 버튼 너비 확대 */
+        font-size: 14px;
+        /* 버튼 글씨 크기 축소 */
+        padding: 8px 10px;
+        /* 버튼 패딩 조정 */
+      }
+
+      #friendSearch {
+        width: 93%;
+      }
+
+      .modal {
+        width: 85%;
+        /* 화면 너비의 90%로 조정 */
+        max-width: none;
+        /* 최대 너비 제한 제거 */
+        padding: 15px;
+        /* 내부 여백 축소 */
+        border-radius: 10px;
+        /* 둥근 모서리 크기 축소 */
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        /* 그림자 크기 조정 */
+      }
+
+      .modal-content {
+        text-align: center;
+        font-size: 17px;
+        /* 글꼴 크기 축소 */
+      }
+
+      .modal h2 {
+        font-size: 25px;
+        /* 제목 크기 축소 */
+        margin-bottom: 15px;
+        /* 아래 여백 축소 */
+      }
+
+      .modal label {
+        margin-right: 10px;
+      }
+
+      .modal input {
+        margin: 10px;
+        width: 70%;
+        /* 입력 필드 너비를 70%로 확장 */
+        padding: 8px;
+        /* 패딩 조정 */
+        font-size: 14px;
+        /* 글꼴 크기 유지 */
+      }
+
+      .modal button {
+        width: 70%;
+        /* 버튼 너비를 70%로 설정 */
+        padding: 10px;
+        /* 패딩 조정 */
+        margin: 10px 0;
+        /* 위아래 여백 추가 */
+        font-size: 14px;
+        /* 글꼴 크기 축소 */
+      }
+
+      .close {
+        top: 5px;
+        /* 닫기 버튼 위치 조정 */
+        right: 5px;
+        font-size: 25px;
+        /* 크기 축소 */
+      }
+
+      #friend-list {
+        margin-bottom: 20px;
+        /* 추가 여백 */
+      }
+    }
+  </style>
+
 </head>
+
 <body>
   <div class="friend-controls">
     <button onclick="showModal('addFriendModal')">친구 추가</button>
@@ -129,99 +430,156 @@
   </div>
 
   <div class="content">
-    <h1>친구 시간표</h1>
-    <hr style="width: 50%; margin-top: 0;">
-    
-    <div id="friend-list">
-      <h2>친구 목록</h2>
-      <div class="friend-buttons">
-        <button onclick="showFriendSchedule('이헌성')">이헌성</button>
-        <button onclick="showFriendSchedule('김태경')">김태경</button>
-        <button onclick="showFriendSchedule('권효정')">권효정</button>
-        <button onclick="showFriendSchedule('김하연')">김하연</button>
-      </div>
+    <div id="title1">
+      <h1>친구 시간표</h1>
+      <hr style="width: 50%; margin-top: 0;">
     </div>
-    
-    <div id="schedule-container"></div>
+
+    <div id="content1">
+      <div id="friend-list">
+        <h2>친구 목록</h2>
+        <!-- 검색 입력 필드 추가 -->
+        <div class="search-container">
+          <input type="text" id="friendSearch" placeholder="친구 이름 검색..." oninput="filterFriends()">
+        </div>
+
+        <div class="friend-buttons">
+          <button onclick="showFriendSchedule('이헌성')">이헌성</button>
+          <button onclick="showFriendSchedule('김태경')">김태경</button>
+          <button onclick="showFriendSchedule('권효정')">권효정</button>
+          <button onclick="showFriendSchedule('김하연')">김하연</button>
+        </div>
+
+        <div id="addFriendModal" class="modal">
+          <div class="modal-content">
+            <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
+            <h2>친구 추가</h2>
+            <label for="studentId" class="studentId" style="margin-right: 5px; font-size: 18px;">학번</label>
+            <input type="text" class="studentId"> <br>
+            <label for="name" class="name" style="margin-right: 5px; font-size: 18px;">이름</label>
+            <input type="text" class="name"> <br><br>
+            <button onclick="followUser()" id="followButton">팔로우</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="schedule-container"></div>
+    </div>
   </div>
 
-  <div id="addFriendModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeModal('addFriendModal')">&times;</span>
-      <h2>친구 추가</h2>
-      <label for="studentId">학번</label>
-      <input type="text" id="studentId">
-      <label for="name">이름</label>
-      <input type="text" id="name">
-      <button onclick="followUser()">팔로우</button>
-    </div>
-  </div>
+
 
   <div id="removeFriendModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('removeFriendModal')">&times;</span>
       <h2>친구 삭제</h2>
       <ul id="remove-friends-list">
-        <li>이헌성 <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
-        <li>김태경 <button onclick="unfollowUser('김태경')">언팔로우</button></li>
-        <li>권효정 <button onclick="unfollowUser('권효정')">언팔로우</button></li>
-        <li>김하연 <button onclick="unfollowUser('김하연')">언팔로우</button></li>
+        <li>이헌성 &nbsp; <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
+        <li>김태경 &nbsp; <button onclick="unfollowUser('김태경')">언팔로우</button></li>
+        <li>권효정 &nbsp; <button onclick="unfollowUser('권효정')">언팔로우</button></li>
+        <li>김하연 &nbsp; <button onclick="unfollowUser('김하연')">언팔로우</button></li>
       </ul>
     </div>
   </div>
 
   <script src="../../static/tools.js"></script>
   <script>
-    async function loadSchedules() {
+    // 페이지 로드 시 친구 목록 불러오기
+    document.addEventListener("DOMContentLoaded", async () => {
       try {
-        const response = await fetch("../../tests/friends.json");
-        if (!response.ok) throw new Error("Network response was not ok");
-        return await response.json();
+        const userId = localStorage.getItem("userId"); // 로컬 스토리지에서 로그인된 사용자 ID 가져오기
+        if (!userId) throw new Error("로그인된 사용자 ID가 없습니다.");
+
+        // 친구 목록 API 호출
+        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: userId }),
+        });
+
+        if (!response.ok) throw new Error("친구 목록 가져오기 실패");
+        const data = await response.json();
+
+        if (data.status !== "success") throw new Error(data.message);
+
+        renderFriendButtons(data.friends); // 친구 목록 버튼 생성
       } catch (error) {
-        console.error("Failed to load schedules:", error);
-        return [];
+        console.error("친구 목록 로드 실패:", error);
       }
+    });
+
+    function renderFriendButtons(friends) {
+      const friendButtonsContainer = document.querySelector(".friend-buttons");
+      friendButtonsContainer.innerHTML = ""; // 기존 버튼 초기화
+
+      friends.forEach((friend) => {
+        const button = document.createElement("button");
+        button.textContent = friend.friend_name; // 친구 이름 표시
+        button.onclick = () => showFriendSchedule(friend.friend_id); // 버튼 클릭 시 시간표 불러오기
+        friendButtonsContainer.appendChild(button);
+      });
     }
 
-    async function showFriendSchedule(friendName) {
-      const schedules = await loadSchedules();
-      const friendSchedule = schedules.find((schedule) => schedule.info.name === friendName);
-      if (friendSchedule) {
+    async function showFriendSchedule(friendId) {
+      try {
+        const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: friendId }),
+        });
+
+        if (!response.ok) throw new Error("친구 시간표 가져오기 실패");
+        const data = await response.json();
+
+        if (data.status !== "success") throw new Error(data.message);
+
         const scheduleRenderer = new ScheduleRenderer("schedule-container");
-        scheduleRenderer.showSchedule(friendSchedule);
-      } else {
-        console.error("Schedule not found for:", friendName);
+        scheduleRenderer.showSchedule(data.timetable);
+
+        document.getElementById("schedule-container").scrollIntoView({ behavior: "smooth" });
+      } catch (error) {
+        console.error("친구 시간표 로드 실패:", error);
       }
     }
 
+    // 모달 열기 함수
     function showModal(modalId) {
       document.getElementById(modalId).style.display = "block";
     }
 
+    // 모달 닫기 함수
     function closeModal(modalId) {
       document.getElementById(modalId).style.display = "none";
     }
 
+    // 친구 추가 처리
     function followUser() {
       alert("친구 추가 완료!");
+      // 추가 기능 필요 시 이곳에 구현
     }
 
+    // 친구 삭제 처리
     function unfollowUser(friendName) {
       alert(`${friendName}님을 삭제했습니다.`);
+      // 삭제 기능 필요 시 이곳에 구현
     }
 
-        // 모달 열기 및 닫기 함수 예시 (추가/삭제용)
-    function showAddFriendModal() {
-      document.getElementById("addFriendModal").style.display = "block";
-    }
+    // 친구 목록 필터링 함수
+    function filterFriends() {
+      const searchInput = document.getElementById("friendSearch").value.toLowerCase();
+      const friendButtons = document.querySelectorAll(".friend-buttons button");
 
-    function showRemoveFriendModal() {
-      document.getElementById("removeFriendModal").style.display = "block";
-    }
-
-    function closeModal(modalId) {
-      document.getElementById(modalId).style.display = "none";
+      friendButtons.forEach((button) => {
+        const friendName = button.textContent.toLowerCase();
+        button.style.display = friendName.includes(searchInput) ? "block" : "none";
+      });
     }
   </script>
+
 </body>
+
 </html>
