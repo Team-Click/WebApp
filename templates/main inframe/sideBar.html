@@ -110,7 +110,7 @@
     <h3 style="padding: 0; margin-bottom: 0;">계정 정보</h3>
     <hr width="60%">
     <p id="name">이름: 홍길동</p>
-    <p id="studentNumber">학번: 20000000</p>
+    <p id="studentNumber">학번: 20000001</p>
   </div>
 
   <div id="sidebar">
@@ -133,6 +133,23 @@
       // index.html로 이동
       window.parent.location.href = "../../index.html";
     }
+
+    // LocalStorage에서 userName과 userID 불러오기
+    function loadUserData() {
+        const userName = localStorage.getItem('userName');
+        const userID = localStorage.getItem('userId');
+
+        // 이름과 학번 요소 업데이트
+        if (userName) {
+            document.getElementById('name').textContent = `이름: ${userName}`;
+        }
+        if (userID) {
+            document.getElementById('studentNumber').textContent = `학번: ${userID}`;
+        }
+    }
+
+    // 페이지 로드 시 데이터 로드
+    window.onload = loadUserData;
   </script>
 </body>
 </html>
