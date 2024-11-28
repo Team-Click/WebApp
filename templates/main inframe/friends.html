@@ -557,10 +557,10 @@
     }
 
     // 친구 추가 처리
-    function followUser() {
-      alert("친구 추가 완료!");
+   //function followUser() {
+      //alert("친구 추가 완료!");
       // 추가 기능 필요 시 이곳에 구현
-    }
+    //}
 
     // 친구 삭제 처리
     function unfollowUser(friendName) {
@@ -577,6 +577,84 @@
         const friendName = button.textContent.toLowerCase();
         button.style.display = friendName.includes(searchInput) ? "block" : "none";
       });
+    }
+
+    async function followUser() {
+      const studentId = document.getElementById("studentId").value.trim();
+      const name = document.getElementById("name").value.trim();
+      const statusMessage = document.getElementById("addFriendStatus");
+      const userId = localStorage.getItem("userId");
+
+      if (!studentId || !name) {
+        statusMessage.textContent = "학번과 이름을 모두 입력해주세요.";
+        return;
+      }
+
+      try {
+        // 친구 목록 가져오기
+        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: userId }),
+        });
+
+        if (!response.ok) throw new Error("친구 목록 가져오기 실패");
+        const data = await response.json();
+
+        if (data.status !== "success") throw new Error(data.message);
+
+        const friends = data.friends;
+        const isFriendAlready = friends.some(friend =>
+          friend.friend_id === studentId && friend.friend_name === name
+        );
+
+        if (isFriendAlready) {
+          statusMessage.textContent = "이미 팔로우 중입니다!";
+          return;
+        }
+
+        // 유저 클러스터에서 친구 확인
+        const loginResponse = await fetch("http://127.0.0.1:5001/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: studentId, pw: "" }), // 비밀번호는 확인하지 않음
+        });
+
+        const loginData = await loginResponse.json();
+
+        if (loginData.status !== "success") {
+          statusMessage.textContent = "존재하지 않는 유저입니다!";
+          return;
+        }
+
+        // 친구 추가
+        const addFriendResponse = await fetch("http://127.0.0.1:5001/add_friend", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            friend_id: studentId,
+            friend_name: name,
+          }),
+        });
+
+        const addFriendData = await addFriendResponse.json();
+
+        if (addFriendData.status === "success") {
+          statusMessage.textContent = `${name} 사용자를 팔로우하였습니다.`;
+          alert("친구 추가 완료!");
+        } else {
+          throw new Error(addFriendData.message);
+        }
+      } catch (error) {
+        statusMessage.textContent = `오류: ${error.message}`;
+      }
     }
   </script>
 
