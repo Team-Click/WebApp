@@ -21,24 +21,6 @@
       font-style: normal;
     }
 
-    /* 반응형 디자인 */
-    /*모바일 적용 시 해상도 조절*/
-    @media (max-width: 768px) {
-      .signup-container {
-        width: 90%;
-        padding: 1.5rem;
-      }
-
-      input, button {
-        width: 100%;
-        font-size: 1rem;
-      }
-
-      button {
-        height: 50px;
-      }
-    }
-
     /* 로딩 애니메이션 */
     .loading-spinner {
       border: 4px solid #f4f4f4;
@@ -113,6 +95,30 @@
     #message {
       color: #b93234;
       margin-top: 1rem;
+    }
+
+        /* 반응형 디자인 */
+    /*모바일 적용 시 해상도 조절*/
+    @media (max-width: 768px) {
+      .signup-container {
+        width: 80%;
+        padding: 1.5rem;
+      }
+
+      input{
+        width: 93%;
+        font-size: 1rem;
+        margin: auto;
+      }
+
+      button {
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      button {
+        height: 50px;
+      }
     }
   </style>
 </head>

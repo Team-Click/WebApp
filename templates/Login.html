@@ -20,23 +20,6 @@
       font-style: normal;
     }
 
-    /* 반응형 디자인 */
-    @media (max-width: 768px) {
-      .login-container {
-        width: 90%;
-        padding: 1.5rem;
-      }
-
-      input, button {
-        width: 100%;
-        font-size: 1rem;
-      }
-
-      button {
-        height: 50px;
-      }
-    }
-
     /* 전체 바디 스타일 */
     body {
       font-family: 'SMUSnowflake-Regular', 'Arial', sans-serif;
@@ -105,6 +88,24 @@
       color: #b93234;
       font-family: 'SMUSnowflake-Regular', Arial, sans-serif;
       margin-top: 1rem;
+    }
+
+        /* 반응형 디자인 */
+    /*모바일 적용 시 해상도 조절*/
+    @media (max-width: 768px) {
+      .login-container {
+        width: 80%;
+        padding: 1.5rem;
+      }
+
+      input, button {
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      button {
+        height: 50px;
+      }
     }
   </style>
 </head>

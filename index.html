@@ -53,11 +53,36 @@
       color: white;
       cursor: pointer;
     }
+
+    #subname {
+      color: #b93234; 
+      font-family: 'SMUSnowflake-Bold'; 
+      font-size: 30px; text-align: center; 
+      margin-top: 10px; 
+      margin-bottom: 50px;
+  }
+
+    @media screen and (max-width: 768px) {
+      #projectName {
+        margin-top: 30px;
+        margin-bottom: 0;
+      }
+
+      #subname {
+        font-size: 25px;
+      }
+
+      #buttons {  
+      display: grid; 
+      place-items: center; 
+      margin-top: 35px;
+    }
+    }
   </style>
 </head>
 <body>
   <h1 id="projectName">Our Time</h1>
-  <h2 style="color: #b93234; font-family: 'SMUSnowflake-Bold'; font-size: 30px; text-align: center; margin-top: 10px; margin-bottom: 50px;">세종대학교 시간표 협업 사이트</h2>
+  <h2 id="subname">세종대학교 시간표 협업 사이트</h2>
 
   <img src="asset/image/Logo_ver3.png" alt="세종대 마크" style="width: 230px; height: 200px; display: block; margin: 0 auto;">
 

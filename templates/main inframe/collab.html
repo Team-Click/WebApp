@@ -29,7 +29,6 @@
 
     body {
       margin: 0;
-      font-family: 'Arial', sans-serif;
     }
 
     #container {
@@ -94,6 +93,11 @@
       color: white;
     }
 
+    .friend-buttons button.selected:hover {
+      background-color: #a12b2d;
+      color: white;
+    }
+
     .friend-buttons button:hover {
       background-color: #e0e0e0;
       color: black;
@@ -117,6 +121,7 @@
     }
 
     .schedule-table {
+      font-family: Arial, sans-serif;
       margin: auto;
       margin-top: 40px;
       margin-bottom: 50px;
@@ -125,26 +130,28 @@
       table-layout: fixed;
       border-radius: 20px;
       overflow: hidden;
-      border: 1px solid #ffffff;
+      border: 1px solid #b93234;
       box-shadow: 3px 3px 5px #ddd,
-                  0 0 3px #ddd,
-                  0 0 3px #ddd;
+        0 0 3px #ddd,
+        0 0 3px #ddd;
     }
 
-    .schedule-table th,
     .schedule-table td {
       border: 1px solid #ddd;
       text-align: center;
-      padding: 5px;
       height: 30px;
+      padding: 5px;
       font-size: 13px;
       word-wrap: break-word;
     }
 
     .schedule-table th {
+      border: 1px solid #ddd;
+      text-align: center;
+      padding: 1%;
+      height: 30px;
       font-size: 15px;
-      background-color: #b93234;
-      color: white;
+      word-wrap: break-word;
     }
 
     .schedule-table td.free {
@@ -170,6 +177,93 @@
     button:hover {
       background-color: #a12b2d;
     }
+
+    #start {
+      margin: 20px;
+    }
+
+    /* 모바일 스타일 */
+    @media screen and (max-width: 768px) {
+      h1 {
+        font-size: 28px;
+        /* 제목 크기 축소 */
+        margin-top: 20px;
+      }
+
+      #container {
+        flex-direction: column;
+        /* 친구 목록과 시간표를 세로로 배치 */
+        align-items: center;
+      }
+
+      #friend-list {
+        width: 85%;
+        /* 너비 확장 */
+        margin-bottom: 20px;
+        /* 아래쪽 여백 추가 */
+      }
+
+      .friend-buttons button {
+        width: 100%;
+        /* 버튼이 전체 너비를 차지 */
+        font-size: 14px;
+        /* 글자 크기 축소 */
+        padding: 10px;
+        /* 버튼 패딩 조정 */
+      }
+
+      .search-container input {
+        width: 93%;
+        /* 검색창이 친구 목록 너비에 맞게 조정 */
+        font-size: 14px;
+      }
+
+      #schedule-table-container {
+        width: 90%;
+        /* 시간표 컨테이너 너비 조정 */
+      }
+
+      .schedule-table {
+        font-size: 12px;
+        /* 테이블 글자 크기 축소 */
+        width: 100%;
+        /* 테이블이 화면 너비에 맞게 조정 */
+        border-radius: 10px;
+        /* 둥근 모서리 조정 */
+      }
+
+      .schedule-table th,
+      .schedule-table td {
+        padding: 5px;
+        /* 셀 패딩 축소 */
+        height: 25px;
+        /* 셀 높이 축소 */
+      }
+
+      .schedule-table th:first-child {
+        background-color: #b93234;
+        /* '시간' 셀 배경 유지 */
+        color: white;
+      }
+
+      button {
+        width: 100%;
+        /* 버튼이 화면 너비에 맞도록 조정 */
+        font-size: 14px;
+        /* 버튼 글자 크기 축소 */
+        padding: 8px 10px;
+        /* 패딩 축소 */
+      }
+
+      #friendSearch {
+        margin-bottom: 10px;
+      }
+
+      #start {
+      margin: 0;
+      margin-top: 20px;
+    }
+    }
   </style>
 </head>
 
@@ -191,7 +285,7 @@
         <button onclick="toggleSelection(this, '22011925_권효정')">권효정</button>
         <button onclick="toggleSelection(this, '23011881_김하연')">김하연</button>
       </div>
-      <button onclick="findCommonFreeTime()" style="margin: 20px;">공통 빈 시간대 찾기</button>
+      <button id="start" onclick="findCommonFreeTime()">공통 빈 시간대 찾기</button>
     </div>
 
     <div id="schedule-table-container"></div>
@@ -259,7 +353,12 @@
       });
 
       displayScheduleTable(commonFreeTimes);
+
+      // 스크롤 이동 추가
+      const scheduleContainer = document.getElementById('schedule-table-container');
+      scheduleContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
 
     function getFreeTimeForStudent(schedule) {
       const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
@@ -286,50 +385,57 @@
     }
 
     function displayScheduleTable(freeTimes) {
-      const container = document.getElementById('schedule-table-container');
-      container.innerHTML = '';
+  const container = document.getElementById('schedule-table-container');
+  container.innerHTML = '';
 
-      const table = document.createElement('table');
-      table.className = 'schedule-table';
+  const table = document.createElement('table');
+  table.className = 'schedule-table';
 
-      const headerRow = document.createElement('tr');
-      const days = ["시간", "월요일", "화요일", "수요일", "목요일", "금요일"];
-      days.forEach((day, index) => {
-        const th = document.createElement('th');
-        th.textContent = day;
-        if (index === 0) {
-          th.style.backgroundColor = '#b93234'; // 붉은색 배경
-          th.style.color = 'white'; // 흰색 글자
-        } else {
-          th.style.backgroundColor = '#b93234'; // 다른 요일 배경색 유지
-          th.style.color = 'white';
-        }
-        headerRow.appendChild(th);
-      });
-      table.appendChild(headerRow);
-
-      for (let minutes = 540; minutes < 1440; minutes += 30) {
-        const row = document.createElement('tr');
-        const timeCell = document.createElement('th');
-        const hour = Math.floor(minutes / 60);
-        const minute = minutes % 60;
-        timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        timeCell.style.backgroundColor = 'white'; // 시간 열 배경 흰색
-        timeCell.style.color = 'black'; // 시간 열 글자색 검정
-        row.appendChild(timeCell);
-
-        freeTimes.forEach(day => {
-          const timeSlot = (minutes - 540) / 30;
-          const cell = document.createElement('td');
-          cell.className = day[timeSlot] ? 'free' : 'busy';
-          cell.textContent = day[timeSlot] ? 'O' : 'X';
-          row.appendChild(cell);
-        });
-        table.appendChild(row);
-      }
-
-      container.appendChild(table);
+  // 제목행 생성
+  const headerRow = document.createElement('tr');
+  const days = ["시간", "월", "화", "수", "목", "금"];
+  days.forEach((day, index) => {
+    const th = document.createElement('th');
+    th.textContent = day;
+    if (index === 0) {
+      th.style.backgroundColor = '#b93234'; // 붉은색 배경
+      th.style.color = 'white'; // 흰색 글자
+    } else {
+      th.style.backgroundColor = '#b93234'; // 다른 요일 배경색 유지
+      th.style.color = 'white';
     }
+    th.style.padding = '10px'; // 제목행 패딩
+    headerRow.appendChild(th);
+  });
+  table.appendChild(headerRow);
+
+  // 시간표 행 생성
+  for (let minutes = 540; minutes < 1440; minutes += 30) {
+    const row = document.createElement('tr');
+    const timeCell = document.createElement('th');
+    const hour = Math.floor(minutes / 60);
+    const minute = minutes % 60;
+    timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+    timeCell.style.backgroundColor = 'white'; // 시간 열 배경 흰색
+    timeCell.style.color = 'black'; // 시간 열 글자색 검정
+    timeCell.style.fontWeight = '400'; // 폰트 두께를 보통으로 설정
+    timeCell.style.fontSize = '13px'; // 글자 크기 조정
+    timeCell.style.padding = '5px'; // 시간 셀 패딩
+    row.appendChild(timeCell);
+
+    freeTimes.forEach(day => {
+      const timeSlot = (minutes - 540) / 30;
+      const cell = document.createElement('td');
+      cell.className = day[timeSlot] ? 'free' : 'busy';
+      cell.textContent = day[timeSlot] ? 'O' : 'X';
+      cell.style.padding = '5px'; // 데이터 셀 패딩
+      row.appendChild(cell);
+    });
+    table.appendChild(row);
+  }
+
+  container.appendChild(table);
+} 
   </script>
 </body>
 
