@@ -502,6 +502,7 @@
         if (data.status !== "success") throw new Error(data.message);
 
         renderFriendButtons(data.friends); // 친구 목록 버튼 생성
+        renderRemoveFriendList(data.friends);
       } catch (error) {
         console.error("친구 목록 로드 실패:", error);
       }
@@ -647,6 +648,47 @@
         }
       } catch (error) {
         statusMessage.textContent = `오류: ${error.message}`;
+      }
+
+      
+    }
+
+    function renderRemoveFriendList(friends) {
+      const removeFriendsList = document.getElementById("remove-friends-list");
+      removeFriendsList.innerHTML = "";
+
+      friends.forEach((friend) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = friend.friend_name;
+
+        const button = document.createElement("button");
+        button.textContent = "언팔로우";
+        button.onclick = () => unfollowUser(friend.friend_id, friend.friend_name);
+
+        listItem.appendChild(button);
+        removeFriendsList.appendChild(listItem);
+      });
+    }
+
+    async function unfollowUser(friendId, friendName) {
+      const userId = localStorage.getItem("userId");
+      try {
+        const response = await fetch("http://127.0.0.1:5001/remove_friend", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, friend_id: friendId }),
+        });
+
+        const data = await response.json();
+        if (data.status === "success") {
+          alert(`${friendName} 유저가 친구 목록에서 삭제되었습니다!`);
+          location.reload();
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        console.error("친구 삭제 실패:", error);
+        alert("친구 삭제 중 오류가 발생했습니다.");
       }
     }
   </script>

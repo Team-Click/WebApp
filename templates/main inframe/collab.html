@@ -260,9 +260,9 @@
       }
 
       #start {
-      margin: 0;
-      margin-top: 20px;
-    }
+        margin: 0;
+        margin-top: 20px;
+      }
     }
   </style>
 </head>
@@ -294,59 +294,103 @@
   <script>
     const selectedStudents = new Set();
 
-    function toggleSelection(button, studentInfo) {
-      if (selectedStudents.has(studentInfo)) {
-        selectedStudents.delete(studentInfo);
-        button.classList.remove('selected');
+    // 페이지 로드 시 친구 목록 불러오기
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const userId = localStorage.getItem("userId");
+        if (!userId) throw new Error("로그인된 사용자 ID가 없습니다.");
+
+        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: userId }),
+        });
+
+        if (!response.ok) throw new Error("친구 목록 가져오기 실패");
+        const data = await response.json();
+
+        if (data.status !== "success") throw new Error(data.message);
+
+        renderFriendButtons(data.friends);
+      } catch (error) {
+        console.error("친구 목록 로드 실패:", error.message);
+      }
+    });
+
+    // 친구 목록 버튼 생성
+    function renderFriendButtons(friends) {
+      const friendButtonsContainer = document.getElementById("friendButtons");
+      friendButtonsContainer.innerHTML = "";
+
+      friends.forEach((friend) => {
+        const button = document.createElement("button");
+        button.textContent = friend.friend_name;
+        button.onclick = () => toggleSelection(button, friend.friend_id);
+        friendButtonsContainer.appendChild(button);
+      });
+    }
+
+    // 친구 선택 토글
+    function toggleSelection(button, friendId) {
+      if (selectedStudents.has(friendId)) {
+        selectedStudents.delete(friendId);
+        button.classList.remove("selected");
       } else {
-        selectedStudents.add(studentInfo);
-        button.classList.add('selected');
+        selectedStudents.add(friendId);
+        button.classList.add("selected");
       }
     }
 
-    function filterFriends() {
-      const searchInput = document.getElementById('friendSearch').value.toLowerCase();
-      const buttons = document.getElementById('friendButtons').getElementsByTagName('button');
-
-      for (let button of buttons) {
-        const name = button.textContent.toLowerCase();
-        button.style.display = name.includes(searchInput) ? 'block' : 'none';
-      }
-    }
-
+    // 공통 빈 시간대 찾기
     async function findCommonFreeTime() {
-      const selectedStudentInfos = Array.from(selectedStudents);
+      const selectedFriendIds = Array.from(selectedStudents);
 
-      if (selectedStudentInfos.length === 0) {
+      if (selectedFriendIds.length === 0) {
         alert("한 명 이상의 친구를 선택해주세요.");
         return;
       }
 
       const studentSchedules = [];
-      for (const studentInfo of selectedStudentInfos) {
-        const [number, name] = studentInfo.split('_');
-        const filePath = `../../asset/json/${number}_${name}.json`;
+      for (const friendId of selectedFriendIds) {
         try {
-          const response = await fetch(filePath);
+          const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: friendId }),
+          });
+
           if (!response.ok) {
-            console.error(`Failed to fetch schedule for ${name}`);
+            console.error(`Failed to fetch schedule for friend ID ${friendId}`);
             continue;
           }
-          const studentData = await response.json();
-          studentSchedules.push(studentData);
+
+          const data = await response.json();
+          if (data.status !== "success") {
+            console.error(`Error in response for friend ID ${friendId}:`, data.message);
+            continue;
+          }
+
+          studentSchedules.push(data.timetable);
         } catch (error) {
-          console.error(`Error fetching schedule for ${name}:`, error);
+          console.error(`Error fetching schedule for friend ID ${friendId}:`, error.message);
         }
       }
 
       if (studentSchedules.length === 0) {
-        alert("일치하는 친구가 없습니다.");
+        alert("친구 시간표를 불러올 수 없습니다.");
         return;
       }
 
-      let commonFreeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
-      studentSchedules.forEach(student => {
-        const freeTimes = getFreeTimeForStudent(student.schedule);
+      let commonFreeTimes = Array(5)
+        .fill(null)
+        .map(() => Array(30).fill(true));
+
+      studentSchedules.forEach((schedule) => {
+        const freeTimes = getFreeTimeForStudent(schedule.schedule);
         commonFreeTimes = commonFreeTimes.map((day, dayIndex) =>
           day.map((time, timeIndex) => time && freeTimes[dayIndex][timeIndex])
         );
@@ -354,89 +398,85 @@
 
       displayScheduleTable(commonFreeTimes);
 
-      // 스크롤 이동 추가
-      const scheduleContainer = document.getElementById('schedule-table-container');
-      scheduleContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const scheduleContainer = document.getElementById("schedule-table-container");
+      scheduleContainer.scrollIntoView({ behavior: "smooth", block: "start" });
     }
 
-
+    // 학생의 자유시간표 계산
     function getFreeTimeForStudent(schedule) {
-      const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
+  const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
 
-      schedule.forEach(({ class_days, start_time, end_time }) => {
-        const startTime = parseTime(start_time);
-        const endTime = parseTime(end_time);
-        class_days.forEach(day => {
-          for (let time = startTime; time < endTime; time += 30) {
-            const timeSlot = (time - 540) / 30; // Adjusted for 9:00 (540 minutes) start
-            if (timeSlot >= 0 && timeSlot < 30) {
-              freeTimes[day - 1][timeSlot] = false;
-            }
-          }
-        });
-      });
+  schedule.forEach(({ day, start_time, end_time }) => {
+    const startTime = parseTime(start_time);
+    const endTime = parseTime(end_time);
 
-      return freeTimes;
+    for (let time = startTime; time < endTime; time += 30) {
+      const timeSlot = (time - 540) / 30;
+      if (timeSlot >= 0 && timeSlot < 30) {
+        freeTimes[day - 1][timeSlot] = false;
+      }
     }
+  });
 
+  return freeTimes;
+}
+
+    // 시간 문자열을 분 단위로 변환
     function parseTime(timeStr) {
-      const [hours, minutes] = timeStr.split(':').map(Number);
+      const [hours, minutes] = timeStr.split(":").map(Number);
       return hours * 60 + minutes;
     }
 
+    // 시간표 출력
     function displayScheduleTable(freeTimes) {
-  const container = document.getElementById('schedule-table-container');
-  container.innerHTML = '';
+      const container = document.getElementById("schedule-table-container");
+      container.innerHTML = "";
 
-  const table = document.createElement('table');
-  table.className = 'schedule-table';
+      const table = document.createElement("table");
+      table.className = "schedule-table";
 
-  // 제목행 생성
-  const headerRow = document.createElement('tr');
-  const days = ["시간", "월", "화", "수", "목", "금"];
-  days.forEach((day, index) => {
-    const th = document.createElement('th');
-    th.textContent = day;
-    if (index === 0) {
-      th.style.backgroundColor = '#b93234'; // 붉은색 배경
-      th.style.color = 'white'; // 흰색 글자
-    } else {
-      th.style.backgroundColor = '#b93234'; // 다른 요일 배경색 유지
-      th.style.color = 'white';
+      // 제목행 생성
+      const headerRow = document.createElement("tr");
+      const days = ["시간", "월", "화", "수", "목", "금"];
+      days.forEach((day) => {
+        const th = document.createElement("th");
+        th.textContent = day;
+        th.style.backgroundColor = "#b93234"; // 1행 배경색 변경
+        th.style.color = "white"; // 텍스트 색상을 흰색으로
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // 시간표 행 생성
+      for (let minutes = 540; minutes < 1440; minutes += 30) {
+        const row = document.createElement("tr");
+        const timeCell = document.createElement("th");
+        const hour = Math.floor(minutes / 60);
+        const minute = minutes % 60;
+        timeCell.textContent = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+        timeCell.style.backgroundColor = "white"; // 시간 열 배경 흰색
+        timeCell.style.color = "black"; // 시간 열 글자색 검정
+        timeCell.style.fontWeight = "400"; // 폰트 두께를 보통으로 설정
+        timeCell.style.fontSize = "13px"; // 글자 크기 조정
+        timeCell.style.padding = "5px"; // 시간 셀 패딩
+        row.appendChild(timeCell);
+
+        freeTimes.forEach((day) => {
+          const timeSlot = (minutes - 540) / 30;
+          const cell = document.createElement("td");
+          cell.className = day[timeSlot] ? "free" : "busy";
+          cell.textContent = day[timeSlot] ? "O" : "X";
+          cell.style.padding = "5px"; // 데이터 셀 패딩
+          row.appendChild(cell);
+        });
+        table.appendChild(row);
+      }
+
+      container.appendChild(table);
     }
-    th.style.padding = '10px'; // 제목행 패딩
-    headerRow.appendChild(th);
-  });
-  table.appendChild(headerRow);
-
-  // 시간표 행 생성
-  for (let minutes = 540; minutes < 1440; minutes += 30) {
-    const row = document.createElement('tr');
-    const timeCell = document.createElement('th');
-    const hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-    timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-    timeCell.style.backgroundColor = 'white'; // 시간 열 배경 흰색
-    timeCell.style.color = 'black'; // 시간 열 글자색 검정
-    timeCell.style.fontWeight = '400'; // 폰트 두께를 보통으로 설정
-    timeCell.style.fontSize = '13px'; // 글자 크기 조정
-    timeCell.style.padding = '5px'; // 시간 셀 패딩
-    row.appendChild(timeCell);
-
-    freeTimes.forEach(day => {
-      const timeSlot = (minutes - 540) / 30;
-      const cell = document.createElement('td');
-      cell.className = day[timeSlot] ? 'free' : 'busy';
-      cell.textContent = day[timeSlot] ? 'O' : 'X';
-      cell.style.padding = '5px'; // 데이터 셀 패딩
-      row.appendChild(cell);
-    });
-    table.appendChild(row);
-  }
-
-  container.appendChild(table);
-} 
   </script>
+
+
 </body>
 
 </html>

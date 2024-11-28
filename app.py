@@ -180,6 +180,28 @@ def check_user():
     except Exception as e:
         return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"})
 
+@app.route('/remove_friend', methods=['POST'])
+def remove_friend():
+    try:
+        data = request.json
+        user_id = data.get("user_id")
+        friend_id = data.get("friend_id")
+
+        if not user_id or not friend_id:
+            return jsonify({"status": "error", "message": "필수 정보가 누락되었습니다."})
+
+        result = friend_collection.update_one(
+            {"_id": user_id},
+            {"$pull": {"friends": {"friend_id": friend_id}}}
+        )
+
+        if result.modified_count == 0:
+            return jsonify({"status": "error", "message": "친구 목록에서 삭제되지 않았습니다."})
+
+        return jsonify({"status": "success", "message": "친구가 성공적으로 삭제되었습니다."})
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"})
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001, debug=True)
