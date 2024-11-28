@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>친구 목록</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        #friendList {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>친구 목록</h1>
+    <div id="friendList">친구 목록을 불러오는 중...</div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            const friendListDiv = document.getElementById('friendList');
+            
+            if (!userId) {
+                alert('로그인 정보가 없습니다. 로그인 페이지로 이동합니다.');
+                window.location.href = 'main.html';
+                return;
+            }
+    
+            // 서버에서 친구 목록 가져오기
+            fetch('http://127.0.0.1:5001/get_friends', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                friendListDiv.innerHTML = ''; // 초기 텍스트 제거
+    
+                if (data.status === 'success' && data.friends.length > 0) {
+                    data.friends.forEach(friend => {
+                        const button = document.createElement('button');
+                        button.textContent = `${friend.friend_name} (${friend.friend_id})`;
+                        button.onclick = () => {
+                            localStorage.setItem('friendId', friend.friend_id);
+                            localStorage.setItem('friendName', friend.friend_name);
+                            window.location.href = 'friendtable.html';
+                        };
+                        friendListDiv.appendChild(button);
+                    });
+                } else if (data.status === 'success' && data.friends.length === 0) {
+                    friendListDiv.textContent = '친구 목록이 없습니다.';
+                } else {
+                    friendListDiv.textContent = '친구 목록을 불러오는 중 오류가 발생했습니다.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                friendListDiv.textContent = '친구 목록을 불러오는 중 서버 오류가 발생했습니다.';
+            });
+        });
+    </script>
+    
+</body>
+</html>

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>회원가입 페이지</title>
+  <link rel="stylesheet" href="/static/csss/integrated.css"> <!-- 외부 CSS 파일 -->
   <style>
     /* CSS 스타일 정의 */
     @font-face {
@@ -207,20 +208,19 @@
       if (hasError) return;
 
       try {
-        // 서버로 데이터 전송
         const response = await fetch('http://127.0.0.1:5001/register', {
-          method: 'POST', // POST 요청
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // JSON 데이터 전송
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ _id: studentId, info: { name, pw: password }}), // 입력값 JSON 변환
+          body: JSON.stringify({ _id: studentId, info: { name, pw: password } })
         });
-
-        const result = await response.json(); // 서버 응답 데이터 받기
-
+  
+        const result = await response.json();
+  
         if (result.success) {
           alert("회원가입이 성공적으로 완료되었습니다.");
-          window.location.href = "Login.html";
+          window.location.href = "main.html";
         } else {
           alert("회원가입에 실패했습니다. 다시 시도해 주세요.");
         }
