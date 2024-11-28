@@ -315,7 +315,7 @@
 
         renderFriendButtons(data.friends);
       } catch (error) {
-        console.error("친구 목록 로드 실패:", error);
+        console.error("친구 목록 로드 실패:", error.message);
       }
     });
 
@@ -376,7 +376,7 @@
 
           studentSchedules.push(data.timetable);
         } catch (error) {
-          console.error(`Error fetching schedule for friend ID ${friendId}:`, error);
+          console.error(`Error fetching schedule for friend ID ${friendId}:`, error.message);
         }
       }
 
@@ -385,8 +385,11 @@
         return;
       }
 
-      let commonFreeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
-      studentSchedules.forEach(schedule => {
+      let commonFreeTimes = Array(5)
+        .fill(null)
+        .map(() => Array(30).fill(true));
+
+      studentSchedules.forEach((schedule) => {
         const freeTimes = getFreeTimeForStudent(schedule.schedule);
         commonFreeTimes = commonFreeTimes.map((day, dayIndex) =>
           day.map((time, timeIndex) => time && freeTimes[dayIndex][timeIndex])
@@ -401,23 +404,22 @@
 
     // 학생의 자유시간표 계산
     function getFreeTimeForStudent(schedule) {
-      const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
+  const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
 
-      schedule.forEach(({ day, start_time, end_time }) => {
-        const startTime = parseTime(start_time);
-        const endTime = parseTime(end_time);
+  schedule.forEach(({ day, start_time, end_time }) => {
+    const startTime = parseTime(start_time);
+    const endTime = parseTime(end_time);
 
-        for (let time = startTime; time < endTime; time += 30) {
-          const timeSlot = (time - 540) / 30;
-          if (timeSlot >= 0 && timeSlot < 30) {
-            freeTimes[day - 1][timeSlot] = false;
-          }
-        }
-      });
-
-      return freeTimes;
+    for (let time = startTime; time < endTime; time += 30) {
+      const timeSlot = (time - 540) / 30;
+      if (timeSlot >= 0 && timeSlot < 30) {
+        freeTimes[day - 1][timeSlot] = false;
+      }
     }
+  });
 
+  return freeTimes;
+}
 
     // 시간 문자열을 분 단위로 변환
     function parseTime(timeStr) {
@@ -427,53 +429,53 @@
 
     // 시간표 출력
     function displayScheduleTable(freeTimes) {
-  const container = document.getElementById("schedule-table-container");
-  container.innerHTML = "";
+      const container = document.getElementById("schedule-table-container");
+      container.innerHTML = "";
 
-  const table = document.createElement("table");
-  table.className = "schedule-table";
+      const table = document.createElement("table");
+      table.className = "schedule-table";
 
-  // 제목행 생성
-  const headerRow = document.createElement("tr");
-  const days = ["시간", "월", "화", "수", "목", "금"];
-  days.forEach((day) => {
-    const th = document.createElement("th");
-    th.textContent = day;
-    th.style.backgroundColor = "#b93234"; // 1행 배경색 변경
-    th.style.color = "white"; // 텍스트 색상을 흰색으로
-    headerRow.appendChild(th);
-  });
-  table.appendChild(headerRow);
+      // 제목행 생성
+      const headerRow = document.createElement("tr");
+      const days = ["시간", "월", "화", "수", "목", "금"];
+      days.forEach((day) => {
+        const th = document.createElement("th");
+        th.textContent = day;
+        th.style.backgroundColor = "#b93234"; // 1행 배경색 변경
+        th.style.color = "white"; // 텍스트 색상을 흰색으로
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
 
-  // 시간표 행 생성
-  for (let minutes = 540; minutes < 1440; minutes += 30) {
-    const row = document.createElement("tr");
-    const timeCell = document.createElement("th");
-    const hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-    timeCell.textContent = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
-    timeCell.style.backgroundColor = "white"; // 시간 열 배경 흰색
-    timeCell.style.color = "black"; // 시간 열 글자색 검정
-    timeCell.style.fontWeight = "400"; // 폰트 두께를 보통으로 설정
-    timeCell.style.fontSize = "13px"; // 글자 크기 조정
-    timeCell.style.padding = "5px"; // 시간 셀 패딩
-    row.appendChild(timeCell);
+      // 시간표 행 생성
+      for (let minutes = 540; minutes < 1440; minutes += 30) {
+        const row = document.createElement("tr");
+        const timeCell = document.createElement("th");
+        const hour = Math.floor(minutes / 60);
+        const minute = minutes % 60;
+        timeCell.textContent = `${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")}`;
+        timeCell.style.backgroundColor = "white"; // 시간 열 배경 흰색
+        timeCell.style.color = "black"; // 시간 열 글자색 검정
+        timeCell.style.fontWeight = "400"; // 폰트 두께를 보통으로 설정
+        timeCell.style.fontSize = "13px"; // 글자 크기 조정
+        timeCell.style.padding = "5px"; // 시간 셀 패딩
+        row.appendChild(timeCell);
 
-    freeTimes.forEach((day) => {
-      const timeSlot = (minutes - 540) / 30;
-      const cell = document.createElement("td");
-      cell.className = day[timeSlot] ? "free" : "busy";
-      cell.textContent = day[timeSlot] ? "O" : "X";
-      cell.style.padding = "5px"; // 데이터 셀 패딩
-      row.appendChild(cell);
-    });
-    table.appendChild(row);
-  }
+        freeTimes.forEach((day) => {
+          const timeSlot = (minutes - 540) / 30;
+          const cell = document.createElement("td");
+          cell.className = day[timeSlot] ? "free" : "busy";
+          cell.textContent = day[timeSlot] ? "O" : "X";
+          cell.style.padding = "5px"; // 데이터 셀 패딩
+          row.appendChild(cell);
+        });
+        table.appendChild(row);
+      }
 
-  container.appendChild(table);
-}
-
+      container.appendChild(table);
+    }
   </script>
+
 
 </body>
 

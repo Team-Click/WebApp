@@ -124,3 +124,31 @@ def get_friends():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001, debug=True)
+
+@app.route('/update_timetable', methods=['POST'])
+def update_timetable():
+    try:
+        # 요청 데이터 파싱
+        data = request.json
+        user_id = data.get("id")
+        updated_schedule = data.get("schedule")
+
+        if not user_id or not updated_schedule:
+            return jsonify({"status": "error", "message": "사용자 ID 또는 시간표 데이터가 누락되었습니다."})
+
+        # 사용자 시간표 업데이트
+        result = timetable_collection.update_one(
+            {"_id": user_id},  # 사용자 ID로 검색
+            {"$set": {"schedule": updated_schedule}}  # 시간표 업데이트
+        )
+
+        if result.matched_count == 0:
+            return jsonify({"status": "error", "message": "해당 사용자 ID를 찾을 수 없습니다."})
+
+        return jsonify({"status": "success", "message": "시간표가 성공적으로 업데이트되었습니다."})
+
+    except Exception as e:
+        return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"}), 500
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5001, debug=True)

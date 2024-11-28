@@ -159,17 +159,15 @@
       <h2>수업 목록</h2>
       <div id="scheduleList"></div>
     </div>
-    
+
     <div class="card">
       <h2>새 수업 추가</h2>
       <label for="newClassName">과목명</label>
       <input type="text" id="newClassName" placeholder="과목명을 입력하세요">
-      
+
       <label for="newClassDays">요일 선택</label>
       <div id="newClassDays" class="day-buttons"></div>
-      <div id="selectedDays">선택한 요일: 없음</div> <!-- 선택한 요일 표시 -->
-
-      <br>
+      <div id="selectedDays">선택한 요일: 없음</div>
 
       <label for="newStartTime">시작 시간</label>
       <input type="time" id="newStartTime" step="1800">
@@ -184,119 +182,195 @@
     </div>
     <button id="saveScheduleButton" onclick="scheduleManager.saveSchedule()">시간표 수정완료</button>
 
-    <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>  
+    <footer style="text-align: center; margin-top: 100px;">&copy;Team Click</footer>
   </div>
 
   <script>
-    const daysOfWeek = ['월', '화', '수', '목', '금'];
+const daysOfWeek = ['월', '화', '수', '목', '금']; // 요일 이름 정의
 
-    class ScheduleManager {
-      constructor() {
-        this.data = {};
-        this.selectedDays = []; // 선택한 요일 저장
-        this.loadData();
-      }
+class ScheduleManager {
+  constructor() {
+    this.data = {}; // 시간표 데이터를 저장할 객체
+    this.selectedDays = []; // 새로 추가할 수업에서 선택된 요일 저장
+    this.loadData(); // 초기화 시 데이터 로드
+  }
 
-      async loadData() {
-        try {
-          const response = await fetch('../../../tests/이헌성.json');
-          this.data = await response.json();
-          this.displayStudentInfo();
-          this.displaySchedule();
-          this.renderDayButtons();
-        } catch (error) {
-          console.error("데이터를 불러오는 중 오류 발생:", error);
-        }
-      }
+  // 서버에서 시간표 데이터를 로드
+  async loadData() {
+    try {
+      const userId = localStorage.getItem("userId"); // 로컬 스토리지에서 사용자 ID 가져오기
+      if (!userId) throw new Error("사용자 ID를 찾을 수 없습니다."); // 사용자 ID가 없을 경우 에러 발생
 
-      displayStudentInfo() {
-        document.getElementById('studentName').textContent = this.data.info.name;
-        document.getElementById('studentNumber').textContent = this.data.info.number;
-      }
+      // `/get_timetable` API 호출
+      const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: userId }), // 사용자 ID 포함
+      });
 
-      displaySchedule() {
-        const scheduleList = document.getElementById('scheduleList');
-        scheduleList.innerHTML = '';
+      if (!response.ok) throw new Error("시간표 데이터를 불러오지 못했습니다."); // 응답이 비정상적일 경우 에러 발생
 
-        this.data.schedule.forEach((classInfo, index) => {
-          const classDiv = document.createElement('div');
-          classDiv.classList.add('class-item');
-          classDiv.innerHTML = `
-            <p><strong>과목명:</strong> ${classInfo.class_name}</p>
-            <p><strong>요일:</strong> ${classInfo.class_days.map(day => daysOfWeek[day - 1]).join(', ')}</p>
-            <p><strong>시간:</strong> ${classInfo.start_time} - ${classInfo.end_time}</p>
-            <p><strong>위치:</strong> ${classInfo.location}</p>
-            <button onclick="scheduleManager.deleteClass(${index})" id="deleteButton">삭제</button>
-            <hr style="background: #b93234; height:0.5px; border:0; margin-bottom: 30px">
-          `;
-          scheduleList.appendChild(classDiv);
-        });
-      }
+      const result = await response.json(); // JSON 응답을 파싱
+      if (result.status !== "success") throw new Error(result.message); // 상태가 실패일 경우 에러 발생
 
-      addClass() {
-        const className = document.getElementById('newClassName').value;
-        const startTime = document.getElementById('newStartTime').value;
-        const endTime = document.getElementById('newEndTime').value;
-        const location = document.getElementById('newLocation').value;
+      this.data = result; // 데이터 저장
+      this.displayStudentInfo(); // 학생 정보 표시
+      this.displaySchedule(); // 시간표 목록 표시
+      this.renderDayButtons(); // 요일 선택 버튼 렌더링
+    } catch (error) {
+      console.error("데이터 로드 오류:", error.message); // 에러 로그 출력
+      alert("시간표 데이터를 불러올 수 없습니다."); // 사용자 알림
+    }
+  }
 
-        if (className && startTime && endTime && location && this.selectedDays.length > 0) {
-          this.data.schedule.push({
-            class_name: className,
-            class_days: this.selectedDays,
-            start_time: startTime,
-            end_time: endTime,
-            location: location
-          });
-          this.displaySchedule();
-          this.clearInputs();
-        }
-      }
+  // 학생 정보 표시
+  displayStudentInfo() {
+    const { name, number } = this.data.user_info || {}; // 사용자 정보 가져오기
+    document.getElementById("studentName").textContent = name || "정보 없음"; // 이름 표시
+    document.getElementById("studentNumber").textContent = number || "정보 없음"; // 학번 표시
+  }
 
-      deleteClass(index) {
-        this.data.schedule.splice(index, 1);
-        this.displaySchedule();
-      }
+  // 시간표 목록 표시
+  displaySchedule() {
+    const scheduleList = document.getElementById("scheduleList");
+    scheduleList.innerHTML = ""; // 기존 목록 초기화
 
-      renderDayButtons() {
-        const daysDiv = document.getElementById('newClassDays');
-        const selectedDaysDisplay = document.getElementById('selectedDays');
-        daysDiv.innerHTML = '';
-
-        daysOfWeek.forEach((day, index) => {
-          const button = document.createElement('button');
-          button.classList.add('day-button');
-          button.dataset.day = index + 1;
-          button.textContent = day;
-          button.onclick = () => {
-            button.classList.toggle('selected');
-            const dayIndex = index + 1;
-            if (this.selectedDays.includes(dayIndex)) {
-              this.selectedDays = this.selectedDays.filter(d => d !== dayIndex);
-            } else {
-              this.selectedDays.push(dayIndex);
-            }
-            selectedDaysDisplay.textContent = `선택한 요일: ${this.selectedDays.map(d => daysOfWeek[d - 1]).join(', ') || '없음'}`;
-          };
-          daysDiv.appendChild(button);
-        });
-      }
-
-      clearInputs() {
-        document.getElementById('newClassName').value = '';
-        document.getElementById('newStartTime').value = '';
-        document.getElementById('newEndTime').value = '';
-        document.getElementById('newLocation').value = '';
-        this.selectedDays = [];
-        this.renderDayButtons();
-      }
-
-      saveSchedule() {
-        alert("시간표가 저장되었습니다.");
-        window.close(); // 창 닫기
-      }
+    const schedule = this.data.timetable?.schedule || []; // 시간표 데이터 가져오기
+    if (!Array.isArray(schedule)) {
+      console.error("시간표 데이터가 유효하지 않습니다."); // 데이터가 배열이 아니면 에러 출력
+      return;
     }
 
-    const scheduleManager = new ScheduleManager();
+    // 시간표 데이터를 그룹화 (수업 이름을 기준으로 묶기)
+    const groupedSchedule = schedule.reduce((acc, classInfo) => {
+      const key = `${classInfo.class_name}-${classInfo.location}-${classInfo.start_time}-${classInfo.end_time}`;
+      acc[key] = acc[key] || { ...classInfo, days: [] };
+      acc[key].days.push(classInfo.day);
+      return acc;
+    }, {});
+
+    // 그룹화된 데이터를 순회하여 HTML 생성
+    Object.values(groupedSchedule).forEach((classInfo, index) => {
+      const days = classInfo.days.map(day => daysOfWeek[day - 1]).join(", "); // 요일 이름으로 변환
+      const classDiv = document.createElement("div");
+      classDiv.classList.add("class-item"); // CSS 클래스 추가
+      classDiv.innerHTML = `
+        <p><strong>과목명:</strong> ${classInfo.class_name}</p>
+        <p><strong>요일:</strong> ${days}</p>
+        <p><strong>시간:</strong> ${classInfo.start_time} - ${classInfo.end_time}</p>
+        <p><strong>위치:</strong> ${classInfo.location}</p>
+        <button onclick="scheduleManager.deleteClass('${index}')">삭제</button>
+        <hr style="background: #b93234; height: 0.5px; border: 0; margin-bottom: 30px">
+      `;
+      scheduleList.appendChild(classDiv); // div 추가
+    });
+  }
+
+  // 새 수업 추가
+  addClass() {
+    const className = document.getElementById("newClassName").value; // 과목명
+    const startTime = document.getElementById("newStartTime").value; // 시작 시간
+    const endTime = document.getElementById("newEndTime").value; // 종료 시간
+    const location = document.getElementById("newLocation").value; // 위치
+
+    // 입력 값이 비어 있거나 요일이 선택되지 않은 경우
+    if (!className || !startTime || !endTime || !location || this.selectedDays.length === 0) {
+      alert("모든 필드를 입력하세요."); // 사용자에게 알림
+      return;
+    }
+
+    // 새 수업 데이터를 시간표에 추가
+    this.selectedDays.forEach(day => {
+      this.data.timetable.schedule.push({
+        class_name: className,
+        day,
+        start_time: startTime,
+        end_time: endTime,
+        location,
+      });
+    });
+
+    this.displaySchedule(); // 업데이트된 시간표 표시
+    this.clearInputs(); // 입력 필드 초기화
+  }
+
+  // 수업 삭제
+  deleteClass(index) {
+    this.data.timetable.schedule.splice(index, 1); // 해당 인덱스의 데이터 제거
+    this.displaySchedule(); // 업데이트된 시간표 표시
+  }
+
+  // 요일 선택 버튼 렌더링
+  renderDayButtons() {
+    const daysDiv = document.getElementById("newClassDays"); // 버튼 컨테이너
+    const selectedDaysDisplay = document.getElementById("selectedDays"); // 선택된 요일 표시
+    daysDiv.innerHTML = ""; // 버튼 초기화
+
+    daysOfWeek.forEach((day, index) => {
+      const button = document.createElement("button");
+      button.classList.add("day-button"); // CSS 클래스 추가
+      button.dataset.day = index + 1; // 요일 번호 저장
+      button.textContent = day; // 버튼 텍스트
+
+      // 버튼 클릭 이벤트 핸들러
+      button.onclick = () => {
+        const dayIndex = index + 1; // 요일 번호 (1부터 시작)
+        if (this.selectedDays.includes(dayIndex)) {
+          this.selectedDays = this.selectedDays.filter(d => d !== dayIndex); // 이미 선택된 경우 제거
+          button.classList.remove("selected"); // 선택 상태 제거
+        } else {
+          this.selectedDays.push(dayIndex); // 선택된 요일 추가
+          button.classList.add("selected"); // 선택 상태 추가
+        }
+        // 선택된 요일 표시 업데이트
+        selectedDaysDisplay.textContent = `선택한 요일: ${this.selectedDays.map(d => daysOfWeek[d - 1]).join(", ") || "없음"}`;
+      };
+
+      daysDiv.appendChild(button); // 버튼 추가
+    });
+  }
+
+  // 입력 필드 초기화
+  clearInputs() {
+    document.getElementById("newClassName").value = ""; // 과목명 초기화
+    document.getElementById("newStartTime").value = ""; // 시작 시간 초기화
+    document.getElementById("newEndTime").value = ""; // 종료 시간 초기화
+    document.getElementById("newLocation").value = ""; // 위치 초기화
+    this.selectedDays = []; // 선택된 요일 초기화
+    this.renderDayButtons(); // 요일 버튼 다시 렌더링
+  }
+
+  // 변경된 시간표를 서버에 저장
+  async saveSchedule() {
+    try {
+      const response = await fetch("http://127.0.0.1:5001/update_timetable", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: localStorage.getItem("userId"), // 사용자 ID
+          schedule: this.data.timetable.schedule, // 시간표 데이터
+        }),
+      });
+
+      if (!response.ok) throw new Error("시간표 저장 실패");
+
+      const result = await response.json();
+      if (result.status !== "success") throw new Error(result.message);
+
+      alert("시간표 저장 완료"); // 성공적으로 저장 시 알림
+      window.close(); // 창 닫기
+    } catch (error) {
+      console.error("시간표 저장 오류:", error); // 에러 로그 출력
+      alert("시간표 저장 중 오류가 발생했습니다."); // 사용자 알림
+    }
+  }
+}
+
+// ScheduleManager 클래스 초기화
+const scheduleManager = new ScheduleManager();
+
   </script>
+  
+  
 </body>
 </html>
