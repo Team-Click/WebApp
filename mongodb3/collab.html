@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>collab</title>
+</head>
+<body>
+  <div class="content">
+    <h1>학생 공통 빈 시간대 조회</h1>
+  </div>
+  <hr style="width: 50%; margin-top: 0;">
+  <div id="schedule-container"></div>
+
+  <input type="file" id="json-files" multiple accept=".json">
+  <button onclick="loadDataAndFindFreeTime()">공통 여유 시간 찾기</button>
+  <div id="schedule-table-container"></div>
+
+  <script>
+    class StudentScheduler {
+      constructor() {
+        this.studentData = [];
+      }
+
+      async loadStudentData(files) {
+        this.studentData = [];
+        for (let file of files) {
+          const fileContent = await file.text();
+          const parsedData = JSON.parse(fileContent);
+          parsedData.fileName = file.name; // 파일명을 저장하여 나중에 필터링에 사용
+          this.studentData.push(parsedData);
+        }
+      }
+
+      parseTime(timeStr) {
+        const [hours, minutes] = timeStr.split(':').map(Number);
+        return hours * 60 + minutes;
+      }
+
+      getFreeTimeForStudent(schedule) {
+        const freeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
+        
+        schedule.forEach(({ class_days, start_time, end_time }) => {
+          const startTime = this.parseTime(start_time);
+          const endTime = this.parseTime(end_time);
+          class_days.forEach(day => {
+            for (let time = startTime; time < endTime; time += 30) {
+              const timeSlot = (time - 540) / 30;
+              if (timeSlot >= 0 && timeSlot < 30) {
+                freeTimes[day - 1][timeSlot] = false;
+              }
+            }
+          });
+        });
+        return freeTimes;
+      }
+
+      findCommonFreeTime() {
+        if (this.studentData.length === 0) {
+          alert("학생 데이터가 없습니다.");
+          return;
+        }
+
+        let commonFreeTimes = Array(5).fill(null).map(() => Array(30).fill(true));
+
+        this.studentData.forEach(student => {
+          const studentFreeTimes = this.getFreeTimeForStudent(student.schedule);
+          commonFreeTimes = commonFreeTimes.map((day, dayIndex) => 
+            day.map((time, timeIndex) => time && studentFreeTimes[dayIndex][timeIndex])
+          );
+        });
+
+        this.displayScheduleTable(commonFreeTimes);
+      }
+
+      displayScheduleTable(freeTimes) {
+        const container = document.getElementById('schedule-table-container');
+        container.innerHTML = '';  
+
+        const table = document.createElement('table');
+        const headerRow = document.createElement('tr');
+        
+        const days = ["월요일", "화요일", "수요일", "목요일", "금요일"];
+        headerRow.appendChild(document.createElement('th')); 
+        days.forEach(day => {
+          const th = document.createElement('th');
+          th.textContent = day;
+          headerRow.appendChild(th);
+        });
+        table.appendChild(headerRow);
+
+        for (let minutes = 540; minutes < 1440; minutes += 30) { 
+          const row = document.createElement('tr');
+          const timeCell = document.createElement('th');
+          const hour = Math.floor(minutes / 60);
+          const minute = minutes % 60;
+          timeCell.textContent = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+          row.appendChild(timeCell);
+
+          freeTimes.forEach(day => {
+            const timeSlot = (minutes - 540) / 30;
+            const cell = document.createElement('td');
+            cell.className = day[timeSlot] ? 'free' : 'busy';
+            cell.textContent = day[timeSlot] ? 'O' : 'X';
+            row.appendChild(cell);
+          });
+          table.appendChild(row);
+        }
+
+        container.appendChild(table);
+      }
+    }
+
+    const scheduler = new StudentScheduler();
+
+    async function loadDataAndFindFreeTime() {
+      const files = document.getElementById('json-files').files;
+      
+      await scheduler.loadStudentData(files);
+      scheduler.findCommonFreeTime();
+    }
+  </script>
+</body>
+</html>

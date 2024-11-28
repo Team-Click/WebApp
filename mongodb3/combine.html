@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시간표 합치기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #friendList {
+            margin: 20px 0;
+        }
+        .friend-button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        #combinedScheduleContainer {
+            margin-top: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>시간표 합치기</h1>
+    <div id="friendList">친구 목록을 불러오는 중...</div>
+    <button id="combineButton">합치기 시작</button>
+    <div class="userinfo" id="userInfo"></div>
+    <div id="timetableContainer">
+        <table>
+            <thead>
+                <tr>
+                    <th>시간</th>
+                    <th>월요일</th>
+                    <th>화요일</th>
+                    <th>수요일</th>
+                    <th>목요일</th>
+                    <th>금요일</th>
+                </tr>
+            </thead>
+            <tbody id="timetableBody"></tbody>
+        </table>
+    </div><br><br>
+    <div id="combinedScheduleContainer"></div>
+
+    <script src="table.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userId = localStorage.getItem('userId');
+            const friendListDiv = document.getElementById('friendList');
+            const combineButton = document.getElementById('combineButton');
+            const combinedScheduleContainer = document.getElementById('combinedScheduleContainer');
+
+            const selectedFriends = new Set();
+
+            if (!userId) {
+                alert('로그인 정보가 없습니다. 로그인 페이지로 이동합니다.');
+                window.location.href = 'main.html';
+                return;
+            }
+
+            // 친구 시간표 가져오기
+            function fetchFriendSchedule(friendId, friendName)
+            {
+                console.log("fetchfriendschedule 실행\n");
+                const timetable = new Timetable(friendId, friendName, 'friend');
+                timetable.displayUserInfo();
+                timetable.fetchTimetable();
+                console.log("fetchfriendschedule 실행 완료\n");
+            }
+
+            // 친구 목록 가져오기
+            fetch('http://127.0.0.1:5001/get_friends', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: userId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                friendListDiv.innerHTML = ''; // 초기 텍스트 제거
+
+                if (data.status === 'success' && data.friends.length > 0) {
+                    data.friends.forEach(friend => {
+                        const button = document.createElement('button');
+                        button.textContent = `${friend.friend_name} (${friend.friend_id})`;
+                        button.className = 'friend-button';
+                        button.onclick = () => {
+                            if (selectedFriends.has(friend.friend_id)) {
+                                selectedFriends.delete(friend.friend_id);
+                                button.style.backgroundColor = '';
+                            } else {
+                                selectedFriends.add(friend.friend_id);
+                                button.style.backgroundColor = '#d3d3d3';
+                                localStorage.setItem('friendId', friend.friend_id);
+                                localStorage.setItem('friendName', friend.friend_name);
+                                fetchFriendSchedule(friend.friend_id, friend.friend_name);
+                            }
+                        };
+                        friendListDiv.appendChild(button);
+                    });
+                } else {
+                    friendListDiv.textContent = '친구 목록이 없습니다.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                friendListDiv.textContent = '친구 목록을 불러오는 중 오류가 발생했습니다.';
+            });
+
+            
+
+            // 시간표 합치기
+            combineButton.addEventListener('click', async () => {
+                if (selectedFriends.size === 0) {
+                    alert('친구를 선택하세요.');
+                    return;
+                }
+
+                const friendIds = Array.from(selectedFriends);
+                const combinedSchedules = [];
+
+                for (const friendId of friendIds) {
+                    const response = await fetch('http://127.0.0.1:5001/get_timetable', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id: friendId })
+                    });
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        combinedSchedules.push(...data.timetable);
+                    }
+                }
+
+                renderCombinedSchedule(combinedSchedules, friendIds);
+            });
+
+            // 합쳐진 시간표 렌더링
+            function renderCombinedSchedule(schedules, friendIds) {
+        combinedScheduleContainer.innerHTML = '';
+
+        const title = document.createElement('h2');
+        title.textContent = `선택된 친구들: ${friendIds.join(', ')}`;
+        combinedScheduleContainer.appendChild(title);
+
+        const timeSlots = Array.from({ length: 30 }, (_, i) => {
+            const hours = 7 + Math.floor(i / 2); // 07:00부터 시작
+            const minutes = i % 2 === 0 ? '00' : '30';
+            return `${hours}:${minutes}`;
+        });
+
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // 테이블 헤더 생성
+        const headerRow = document.createElement('tr');
+        const timeHeader = document.createElement('th');
+        timeHeader.textContent = '시간';
+        headerRow.appendChild(timeHeader);
+
+        ['월요일', '화요일', '수요일', '목요일', '금요일'].forEach(day => {
+            const dayHeader = document.createElement('th');
+            dayHeader.textContent = day;
+            headerRow.appendChild(dayHeader);
+        });
+
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // 시간표 내용 생성
+        timeSlots.forEach((slot, index) => {
+            const row = document.createElement('tr');
+            const timeCell = document.createElement('td');
+            timeCell.textContent = slot;
+            row.appendChild(timeCell);
+
+            for (let day = 1; day <= 5; day++) {
+                const cell = document.createElement('td');
+                const entries = schedules.filter(schedule => {
+                    const startIndex = timeSlots.indexOf(schedule.time.split('-')[0]);
+                    const endIndex = timeSlots.indexOf(schedule.time.split('-')[1]);
+                    return day === schedule.day && index >= startIndex && index < endIndex;
+                });
+
+                if (entries.length > 0) {
+                    const entry = entries[0];
+                    cell.textContent = `${entry.class_name} (${entry.location})`;
+                    cell.style.backgroundColor = '#d3d3d3'; // 배경색으로 블록 표시
+                }
+
+                row.appendChild(cell);
+            }
+
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(tbody);
+        combinedScheduleContainer.appendChild(table);
+    }
+        });
+    </script>
+</body>
+</html>
