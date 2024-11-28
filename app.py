@@ -39,6 +39,22 @@ def login():
     except Exception as e:
         return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"})
 
+@app.route('/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        user_id = data['_id']
+        info = data['info']
+
+        if user_collection.find_one({"_id": user_id}):
+            return jsonify({"success": False, "message": "이미 존재하는 사용자입니다."})
+
+        user_collection.insert_one({"_id": user_id, "info": info})
+        friend_collection.insert_one({"_id": user_id, "info": info, "friends":[]})
+        return jsonify({"success": True, "message": "회원가입 성공"})
+    except Exception as e:
+        return jsonify({"success": False, "message": f"오류 발생: {str(e)}"})
+
 @app.route('/get_timetable', methods=['POST'])
 def get_timetable():
     try:
@@ -85,22 +101,6 @@ def get_timetable():
         })
     except Exception as e:
         return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"})
-
-@app.route('/register', methods=['POST'])
-def register():
-    try:
-        data = request.json
-        user_id = data['_id']
-        info = data['info']
-
-        if user_collection.find_one({"_id": user_id}):
-            return jsonify({"success": False, "message": "이미 존재하는 사용자입니다."})
-
-        user_collection.insert_one({"_id": user_id, "info": info})
-        friend_collection.insert_one({"_id": user_id, "info": info, "friends":[]})
-        return jsonify({"success": True, "message": "회원가입 성공"})
-    except Exception as e:
-        return jsonify({"success": False, "message": f"오류 발생: {str(e)}"})
 
 @app.route('/get_friends', methods=['POST'])
 def get_friends():
