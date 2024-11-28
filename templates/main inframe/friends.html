@@ -468,17 +468,13 @@
     </div>
   </div>
 
-
-
+        <!-- <li>김하연 &nbsp; <button onclick="unfollowUser('김하연')">언팔로우</button></li> -->
   <div id="removeFriendModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('removeFriendModal')">&times;</span>
       <h2>친구 삭제</h2>
       <ul id="remove-friends-list">
-        <li>이헌성 &nbsp; <button onclick="unfollowUser('이헌성')">언팔로우</button></li>
-        <li>김태경 &nbsp; <button onclick="unfollowUser('김태경')">언팔로우</button></li>
-        <li>권효정 &nbsp; <button onclick="unfollowUser('권효정')">언팔로우</button></li>
-        <li>김하연 &nbsp; <button onclick="unfollowUser('김하연')">언팔로우</button></li>
+        <!-- 삭제 가능한 친구 목록이 서버에서 동적으로 채워짐 -->
       </ul>
     </div>
   </div>
@@ -556,7 +552,7 @@
     function closeModal(modalId) {
       document.getElementById(modalId).style.display = "none";
     }
-    
+
     // 친구 삭제 처리
     function unfollowUser(friendName) {
       alert(`${friendName}님을 삭제했습니다.`);
