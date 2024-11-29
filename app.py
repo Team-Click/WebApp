@@ -214,13 +214,6 @@ def update_timetable():
         if not user_id or not updated_schedule:
             return jsonify({"status": "error", "message": "사용자 ID 또는 시간표 데이터가 누락되었습니다."})
 
-        # 사용자 정보 업데이트 (필요 시)
-        if info:
-            user_collection.update_one(
-                {"_id": user_id},
-                {"$set": {"info": info}}
-            )
-
         # 사용자 시간표 업데이트
         result = timetable_collection.update_one(
             {"_id": user_id},  # 사용자 ID로 검색
