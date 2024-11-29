@@ -122,19 +122,24 @@ def get_friends():
         print(f"ERROR: {str(e)}")  # 디버깅 출력
         return jsonify({"status": "error", "message": f"서버 오류 발생: {str(e)}"})
 
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5001, debug=True)
-
 @app.route('/update_timetable', methods=['POST'])
 def update_timetable():
     try:
         # 요청 데이터 파싱
         data = request.json
-        user_id = data.get("id")
+        user_id = data.get("_id")
+        info = data.get("info")
         updated_schedule = data.get("schedule")
 
         if not user_id or not updated_schedule:
             return jsonify({"status": "error", "message": "사용자 ID 또는 시간표 데이터가 누락되었습니다."})
+
+        # 사용자 정보 업데이트 (필요 시)
+        if info:
+            user_collection.update_one(
+                {"_id": user_id},
+                {"$set": {"info": info}}
+            )
 
         # 사용자 시간표 업데이트
         result = timetable_collection.update_one(
