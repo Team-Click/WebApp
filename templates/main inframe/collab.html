@@ -300,7 +300,8 @@
         const userId = localStorage.getItem("userId");
         if (!userId) throw new Error("로그인된 사용자 ID가 없습니다.");
 
-        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        //const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        const response = await fetch("https://login-juko.onrender.com/get_friends", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -355,7 +356,8 @@
       const studentSchedules = [];
       for (const friendId of selectedFriendIds) {
         try {
-          const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+          //const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+          const response = await fetch("https://login-juko.onrender.com/get_timetable", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

@@ -160,7 +160,8 @@
   
       try {
         // 서버로 데이터 전송
-        const response = await fetch('http://127.0.0.1:5001/login', { // 플라스크 서버 주소
+        //const response = await fetch('http://127.0.0.1:5001/login', { // 플라스크 서버 주소
+        const response = await fetch('https://login-juko.onrender.com/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json', // JSON 데이터 전송

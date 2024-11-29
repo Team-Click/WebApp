@@ -488,7 +488,8 @@
         if (!userId) throw new Error("로그인된 사용자 ID가 없습니다.");
 
         // 친구 목록 API 호출
-        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        //const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        const response = await fetch("https://login-juko.onrender.com/get_friends", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -522,7 +523,8 @@
 
     async function showFriendSchedule(friendId) {
       try {
-        const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+        //const response = await fetch("http://127.0.0.1:5001/get_timetable", {
+        const response = await fetch("https://login-juko.onrender.com/get_timetable", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -554,12 +556,6 @@
       document.getElementById(modalId).style.display = "none";
     }
 
-    // 친구 삭제 처리
-    function unfollowUser(friendName) {
-      alert(`${friendName}님을 삭제했습니다.`);
-      // 삭제 기능 필요 시 이곳에 구현
-    }
-
     // 친구 목록 필터링 함수
     function filterFriends() {
       const searchInput = document.getElementById("friendSearch").value.toLowerCase();
@@ -586,7 +582,8 @@
 
       try {
         // 친구 목록 가져오기
-        const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        //const response = await fetch("http://127.0.0.1:5001/get_friends", {
+        const response = await fetch("https://login-juko.onrender.com/get_friends", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -611,7 +608,8 @@
         }
 
         // 유저 클러스터에서 친구 확인
-        const userCheckResponse = await fetch("http://127.0.0.1:5001/check_user", {
+        //const userCheckResponse = await fetch("http://127.0.0.1:5001/check_user", {
+        const userCheckResponse = await fetch("https://login-juko.onrender.com/check_user", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: studentId }),
@@ -626,7 +624,8 @@
         }
 
         // 친구 추가
-        const addFriendResponse = await fetch("http://127.0.0.1:5001/add_friend", {
+        //const addFriendResponse = await fetch("http://127.0.0.1:5001/add_friend", {
+        const addFriendResponse = await fetch("https://login-juko.onrender.com/add_friend", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -673,7 +672,8 @@
     async function unfollowUser(friendId, friendName) {
       const userId = localStorage.getItem("userId");
       try {
-        const response = await fetch("http://127.0.0.1:5001/remove_friend", {
+        //const response = await fetch("http://127.0.0.1:5001/remove_friend", {
+        const response = await fetch("https://login-juko.onrender.com/remove_friend", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ user_id: userId, friend_id: friendId }),

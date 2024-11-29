@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>시간표 수정</title>
-  <link rel="stylesheet" href="../../../static/csss/integrated.css">
+  <!-- CSS 경로 확인: 'csss'가 맞는지 확인 필요 -->
+  <link rel="stylesheet" href="../../../static/css/integrated.css">
   <style>
     @font-face {
       font-family: 'SMUSnowflake-Bold';
@@ -55,22 +56,22 @@
     }
 
     .day-button {
-      padding: 10px 20px; /* 버튼 크기 조정 */
+      padding: 10px 20px;
       border: none;
       border-radius: 3px;
       cursor: pointer;
-      background-color: #b93234; /* 기본 배경색 */
+      background-color: #b93234;
       color: white;
       font-size: 16px;
       font-family: 'Arial', sans-serif;
     }
 
     .day-button:hover {
-      background-color: #a12b2d; /* 호버 시 어두운 배경색 */
+      background-color: #a12b2d;
     }
 
     .day-button.selected {
-      background-color: #8f2326; /* 선택 상태 배경색 */
+      background-color: #8f2326;
     }
 
     #selectedDays {
@@ -116,14 +117,22 @@
       background-color: #a12b2d;
     }
 
-    /* 모바일 스타일 */
+    .highlight {
+      animation: highlight 3s ease-in-out;
+    }
+
+    @keyframes highlight {
+      0% { background-color: #d26264; } /* 변경된 강조색 */
+      100% { background-color: transparent; }
+    }
+
     @media screen and (max-width: 600px) {
       #app {
-        width: 90%; /* 화면 너비에 맞추기 */
+        width: 90%;
       }
 
       h2 {
-        font-size: 20px; /* 제목 크기 조정 */
+        font-size: 20px;
       }
 
       .card {
@@ -131,16 +140,16 @@
       }
 
       .day-button {
-        padding: 8px 16px; /* 버튼 크기 줄이기 */
+        padding: 8px 16px;
         font-size: 14px;
       }
 
       input, select {
-        font-size: 14px; /* 입력창 텍스트 크기 줄이기 */
+        font-size: 14px;
       }
 
       button {
-        font-size: 14px; /* 버튼 텍스트 크기 줄이기 */
+        font-size: 14px;
         padding: 8px 16px;
       }
     }
@@ -160,14 +169,14 @@
       <div id="scheduleList"></div>
     </div>
     
-    <div class="card">
-      <h2>새 수업 추가</h2>
+    <div class="card" id="newcard">
+      <h2>수업 추가 및 변경</h2>
       <label for="newClassName">과목명</label>
       <input type="text" id="newClassName" placeholder="과목명을 입력하세요">
       
       <label for="newClassDays">요일 선택</label>
       <div id="newClassDays" class="day-buttons"></div>
-      <div id="selectedDays">선택한 요일: 없음</div> <!-- 선택한 요일 표시 -->
+      <div id="selectedDays">선택한 요일: 없음</div>
 
       <br>
 
@@ -180,7 +189,8 @@
       <label for="newLocation">위치</label>
       <input type="text" id="newLocation" placeholder="수업 위치를 입력하세요">
 
-      <button onclick="scheduleManager.addClass()">추가</button>
+      <!-- "기존 수업 변경" 버튼 제거 -->
+      <button onclick="scheduleManager.addOrUpdateClass()">수업 추가/변경</button>
     </div>
     <button id="saveScheduleButton" onclick="scheduleManager.saveSchedule()">시간표 수정완료</button>
 
@@ -192,72 +202,146 @@
 
     class ScheduleManager {
       constructor() {
-        this.data = {};
-        this.selectedDays = []; // 선택한 요일 저장
-        this.loadData();
+        this.data = {}; // 초기 데이터 객체
+        this.selectedDays = []; // 선택된 요일 목록
+        this.mergedSchedule = {}; // 병합된 시간표 정보를 저장하기 위한 객체
+        this.currentEditingIndex = undefined; // 현재 편집 중인 인덱스
+        this.loadData(); // 초기 데이터 로드
       }
 
       async loadData() {
+        // 서버에서 시간표 데이터를 가져옴
         try {
-          const response = await fetch('../../../tests/이헌성.json');
-          this.data = await response.json();
-          this.displayStudentInfo();
-          this.displaySchedule();
-          this.renderDayButtons();
+          //const response = await fetch('http://127.0.0.1:5001/get_timetable', {
+          const response = await fetch('https://login-juko.onrender.com/get_timetable', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: localStorage.getItem('userId') })
+          });
+          const result = await response.json();
+          if (result.status === 'success') {
+            this.data = result;
+            this.displayStudentInfo(); // 학생 정보를 화면에 표시
+            this.displaySchedule(); // 시간표 정보를 화면에 표시
+            this.renderDayButtons(); // 요일 선택 버튼 렌더링
+          } else {
+            alert("시간표를 불러오는 데 실패했습니다: " + result.message);
+          }
         } catch (error) {
           console.error("데이터를 불러오는 중 오류 발생:", error);
         }
       }
 
       displayStudentInfo() {
-        document.getElementById('studentName').textContent = this.data.info.name;
-        document.getElementById('studentNumber').textContent = this.data.info.number;
+        // 학생 이름과 학번을 화면에 표시
+        document.getElementById('studentName').textContent = this.data.user_info.name;
+        document.getElementById('studentNumber').textContent = this.data.user_info.number;
       }
 
       displaySchedule() {
+        // 시간표 목록을 화면에 표시
         const scheduleList = document.getElementById('scheduleList');
         scheduleList.innerHTML = '';
 
-        this.data.schedule.forEach((classInfo, index) => {
+        // 같은 과목의 시간 정보를 병합하여 표시하기 위해 병합된 시간표 객체 사용
+        this.mergedSchedule = {};
+        this.data.timetable.schedule.forEach(classInfo => {
+          const key = `${classInfo.class_name}-${classInfo.start_time}-${classInfo.end_time}-${classInfo.location}`;
+          if (!this.mergedSchedule[key]) {
+            this.mergedSchedule[key] = { ...classInfo, days: [] };
+          }
+          this.mergedSchedule[key].days.push(classInfo.day);
+        });
+
+        // 병합된 시간표를 화면에 표시
+        Object.values(this.mergedSchedule).forEach((classInfo, index) => {
           const classDiv = document.createElement('div');
           classDiv.classList.add('class-item');
           classDiv.innerHTML = `
             <p><strong>과목명:</strong> ${classInfo.class_name}</p>
-            <p><strong>요일:</strong> ${classInfo.class_days.map(day => daysOfWeek[day - 1]).join(', ')}</p>
+            <p><strong>요일:</strong> ${classInfo.days.map(day => daysOfWeek[day - 1]).join(', ')}</p>
             <p><strong>시간:</strong> ${classInfo.start_time} - ${classInfo.end_time}</p>
             <p><strong>위치:</strong> ${classInfo.location}</p>
-            <button onclick="scheduleManager.deleteClass(${index})" id="deleteButton">삭제</button>
+            <button onclick="scheduleManager.editClass(${index})">수정</button>
+            <button onclick="scheduleManager.deleteClass(${index})">삭제</button>
             <hr style="background: #b93234; height:0.5px; border:0; margin-bottom: 30px">
           `;
           scheduleList.appendChild(classDiv);
         });
       }
 
-      addClass() {
-        const className = document.getElementById('newClassName').value;
+      addOrUpdateClass() {
+        // 새로운 수업을 추가하거나 기존 수업을 변경함
+        const className = document.getElementById('newClassName').value.trim();
         const startTime = document.getElementById('newStartTime').value;
         const endTime = document.getElementById('newEndTime').value;
-        const location = document.getElementById('newLocation').value;
+        const location = document.getElementById('newLocation').value.trim();
 
         if (className && startTime && endTime && location && this.selectedDays.length > 0) {
-          this.data.schedule.push({
-            class_name: className,
-            class_days: this.selectedDays,
-            start_time: startTime,
-            end_time: endTime,
-            location: location
+          this.selectedDays.sort();
+          if (this.currentEditingIndex !== undefined) {
+            // 기존 수업을 변경하는 경우, 기존 수업 삭제
+            const classInfo = Object.values(this.mergedSchedule)[this.currentEditingIndex];
+            this.data.timetable.schedule = this.data.timetable.schedule.filter(entry => {
+              return !(entry.class_name === classInfo.class_name &&
+                       entry.start_time === classInfo.start_time &&
+                       entry.end_time === classInfo.end_time &&
+                       entry.location === classInfo.location &&
+                       classInfo.days.includes(entry.day));
+            });
+            this.currentEditingIndex = undefined; // 편집 완료 후 초기화
+          }
+
+          // 새로운 수업 추가 또는 수정된 내용 추가
+          this.selectedDays.forEach(day => {
+            this.data.timetable.schedule.push({
+              class_name: className,
+              day: day,
+              start_time: startTime,
+              end_time: endTime,
+              location: location
+            });
           });
-          this.displaySchedule();
-          this.clearInputs();
+          this.displaySchedule(); // 시간표 업데이트 후 화면에 표시
+          this.clearInputs(); // 입력 필드 초기화
+          document.getElementById('scheduleList').lastChild.scrollIntoView({ behavior: 'smooth' });
+          document.getElementById('scheduleList').lastChild.classList.add('highlight'); // 추가된 항목 강조
+        } else {
+          alert("모든 필드를 채우고 적어도 하나의 요일을 선택하세요.");
         }
       }
 
+      editClass(index) {
+        // 수정 버튼 클릭 시 수업을 편집 모드로 설정
+        this.currentEditingIndex = index; // 수정 전에 기존 수업을 삭제하여 갱신된 정보로 대체
+        // 선택된 수업 정보를 편집을 위해 입력 필드에 로드
+        const classInfo = Object.values(this.mergedSchedule)[index];
+        document.getElementById('newClassName').value = classInfo.class_name;
+        document.getElementById('newStartTime').value = classInfo.start_time;
+        document.getElementById('newEndTime').value = classInfo.end_time;
+        document.getElementById('newLocation').value = classInfo.location;
+        this.selectedDays = [...classInfo.days];
+        this.renderDayButtons(); // 선택된 요일 버튼 상태 반영
+        document.getElementById('newcard').scrollIntoView({ behavior: 'smooth' }); // 수업 추가 및 변경 섹션으로 스크롤
+      }
+
       deleteClass(index) {
-        this.data.schedule.splice(index, 1);
-        this.displaySchedule();
+        // 선택된 수업을 삭제
+        const classInfo = Object.values(this.mergedSchedule)[index];
+        this.data.timetable.schedule = this.data.timetable.schedule.filter(entry => {
+          return !(entry.class_name === classInfo.class_name &&
+                   entry.start_time === classInfo.start_time &&
+                   entry.end_time === classInfo.end_time &&
+                   entry.location === classInfo.location && // 위치까지 동일한지 확인
+                   classInfo.days.includes(entry.day)); // 선택된 요일과 일치하는지 확인
+        });
+        this.displaySchedule(); // 시간표 업데이트 후 화면에 표시
       }
 
       renderDayButtons() {
+        // 요일 선택 버튼을 렌더링함
         const daysDiv = document.getElementById('newClassDays');
         const selectedDaysDisplay = document.getElementById('selectedDays');
         daysDiv.innerHTML = '';
@@ -275,13 +359,18 @@
             } else {
               this.selectedDays.push(dayIndex);
             }
+            this.selectedDays.sort();
             selectedDaysDisplay.textContent = `선택한 요일: ${this.selectedDays.map(d => daysOfWeek[d - 1]).join(', ') || '없음'}`;
           };
+          if (this.selectedDays.includes(index + 1)) {
+            button.classList.add('selected');
+          }
           daysDiv.appendChild(button);
         });
       }
 
       clearInputs() {
+        // 입력 필드 초기화
         document.getElementById('newClassName').value = '';
         document.getElementById('newStartTime').value = '';
         document.getElementById('newEndTime').value = '';
@@ -290,9 +379,60 @@
         this.renderDayButtons();
       }
 
-      saveSchedule() {
-        alert("시간표가 저장되었습니다.");
-        window.close(); // 창 닫기
+      transformSchedule() {
+        // 시간표 데이터를 백엔드 형식으로 변환
+        const transformed = {
+          _id: this.data.user_info.number,
+          info: {
+            name: this.data.user_info.name,
+            number: this.data.user_info.number
+          },
+          schedule: []
+        };
+
+        // 병합된 시간표를 변환
+        Object.values(this.mergedSchedule).forEach(classInfo => {
+          transformed.schedule.push({
+            class_name: classInfo.class_name,
+            class_days: classInfo.days.map(day => ({ "$numberInt": day.toString() })),
+            start_time: classInfo.start_time,
+            end_time: classInfo.end_time,
+            location: classInfo.location
+          });
+        });
+
+        return transformed;
+      }
+
+      async saveSchedule() {
+        // 서버에 시간표 데이터를 저장함
+        try {
+          const transformedData = this.transformSchedule();
+          
+          // 전송할 데이터 확인을 위해 콘솔에 출력
+          console.log("전송할 수정된 시간표 JSON:", JSON.stringify(transformedData, null, 2));
+
+          //const response = await fetch('http://127.0.0.1:5001/update_timetable', {
+          const response = await fetch('https://login-juko.onrender.com/update_timetable', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(transformedData)
+          });
+
+          const result = await response.json();
+          if (result.status === 'success') {
+            alert("시간표가 성공적으로 저장되었습니다.");
+            // 창 자동 종료 시도
+            window.close();
+          } else {
+            alert("시간표 저장 중 오류 발생: " + result.message);
+          }
+        } catch (error) {
+          console.error("시간표 저장 중 오류 발생:", error);
+          alert("시간표 저장 중 오류가 발생했습니다. 콘솔을 확인하세요.");
+        }
       }
     }
 
