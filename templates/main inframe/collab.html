@@ -325,6 +325,15 @@
       const friendButtonsContainer = document.getElementById("friendButtons");
       friendButtonsContainer.innerHTML = "";
 
+      const userId = localStorage.getItem("userId");
+      const userName = localStorage.getItem("userName");
+      if (userId && userName) {
+        const userButton = document.createElement("button");
+        userButton.textContent = userName; // 사용자 이름 표시
+        userButton.onclick = () => toggleSelection(userButton, userId); // ID로 작동
+        friendButtonsContainer.appendChild(userButton);
+      }
+
       friends.forEach((friend) => {
         const button = document.createElement("button");
         button.textContent = friend.friend_name;
